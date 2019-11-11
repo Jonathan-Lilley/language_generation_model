@@ -22,8 +22,20 @@ def genWords(syls, sylnum, numwords):
 
 # Makes words given a number of syllables and a number of words to make
 def makeWords(dir, numSyls, numwords):
+    wordfile = open(dir+"/outputs/words0.txt",'w')
     words = []
-    syls = [line.strip() for line in open(dir+"/outputs/syllables.txt")]
+    try:
+        syls = [line.strip() for line in open(dir+"/outputs/syllables.txt")]
+    except IOError:
+        print("No syllables file")
+        wordfile.write('')
+        wordfile.close()
+        return
+    if len(syls) == 0:
+        print("No syllables in syllables file")
+        wordfile.write('')
+        wordfile.close()
+        return
     # Defines syllable level weights
     if numSyls == 1:
         sylstats = [1]
@@ -41,7 +53,6 @@ def makeWords(dir, numSyls, numwords):
     # Generate words for each syllable level
     for sylnum in range(numSyls):
         words += genWords(syls, sylnum+1, wordnums[sylnum])
-    wordfile = open(dir+"/outputs/words0.txt",'w')
     wordfile.write('\n'.join(words))
     wordfile.close()
 

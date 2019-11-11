@@ -111,13 +111,10 @@ def parseRule(rule):
 def generateRules(rule,phonemes,IPA_info):
     info_short = IPA_info[:4]
     rules = []
-    #print("RULE:" + rule)
     # Generates all rules with ASPECT:a replaced
     alpharules = replaceAlpha(rule,IPA_info)
     # Iterates through all generated rules
-    #print("ALPHARULES: ")
     for alpharule in alpharules:
-        #print(alpharule)
         # Splits input, output, and environment
         inphonset, outphonset, environment = parseRule(alpharule)
         # Generates full set of input phonemes, output phonemes, and environments
@@ -176,9 +173,16 @@ def allChanges(dir):
             numchanges += 1
     # Goes through each soundchange file
     # i is important because it keeps track of which sound change and words file we're on
+    if numchanges == 0:
+        print("No soundchange files found")
+        return
     for i in range(numchanges):
         soundchanges = [line.strip() for line in open(dir+"/inputs/changes"+str(i+1)+".txt")] # Sound change file
-        words = [line.strip() for line in open(dir+"/outputs/words"+str(i)+".txt")] # existing words file
+        try:
+            words = [line.strip() for line in open(dir+"/outputs/words"+str(i)+".txt")] # existing words file
+        except IOError:
+            print("No words0 file found")
+            return
         phonemes = list(set(''.join(words))) # Sets up phonemes from existing words
         outfile = open(dir+"/outputs/words"+str(i+1)+".txt",'w') # output file
         for soundchange in soundchanges:
@@ -186,10 +190,8 @@ def allChanges(dir):
             for change in newchange:
                 print(change)
                 words = changeSound(words, change)
-        print("IM DONE")
         outfile.write('\n'.join(words)) # puts changed words into the output file for use in the next iteration
         outfile.close()
-    return
 
 
 if __name__ == "__main__":

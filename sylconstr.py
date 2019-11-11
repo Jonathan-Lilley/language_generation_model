@@ -6,9 +6,17 @@ import helpers
 
 # Reads in phonemes file and rules file
 def readInRules(phonemefile, rulesfile):
-    phonemes = (' '.join([line.strip() for line in open(phonemefile)])).split(' ')
-    sylrules = [line.strip().split('|') for line in open(rulesfile)]
     IPA_info = IPA.readInIPA()[:4]
+    try:
+        phonemes = (' '.join([line.strip() for line in open(phonemefile)])).split(' ')
+    except IOError:
+        print("Phonemes file not found")
+        phonemes = []
+    try:
+        sylrules = [line.strip().split('|') for line in open(rulesfile)]
+    except IOError:
+        print("Syllable rule file not found")
+        sylrules = []
     return phonemes, sylrules, IPA_info
 
 def generateRules(rule):
@@ -42,6 +50,10 @@ def sylsFromRule(phonemes,rule,IPA_info):
     for sylele in rule:
         allphons = IPA.findSet(sylele,IPA_info)
         phonset = IPA.filterPhonemes(phonemes,allphons)
+        if len(phonset) == 0:
+            print("ERROR: NO PHONEMES IN SET",sylele)
+            print("ABORTING")
+            return ["ABORT"]
         phonsets.append(phonset)
     # Creates index arrays to keep track of phoneme set indexes
     for sylele in phonsets:
@@ -62,14 +74,21 @@ def constructSyls(dir):
     outfile = dir + "/outputs/syllables.txt"
     phonemefile = dir + "/inputs/phonemes.txt"
     rulesfile = dir + "/inputs/sylstructs.txt"
+    out = open(outfile,'w')
     phonemes, sylrules, IPA_info = readInRules(phonemefile,rulesfile)
+    if len(phonemes) == 0 or len(sylrules) == 0:
+        print("Aborted")
+        out.write('')
+        out.close()
+        return
     sylset = []
     newrules = []
     for rule in sylrules:
         newrules += generateRules(rule)
     for rule in newrules:
         sylset += sylsFromRule(phonemes,rule,IPA_info)
-    out = open(outfile,'w')
+        if "ABORT" in sylset:
+            sylset = []
     out.write('\n'.join(sylset))
     out.close()
 
