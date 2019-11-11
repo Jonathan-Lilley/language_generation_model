@@ -1,4 +1,4 @@
-#Language Generation Model
+# Language Generation Model
 Overview:
 
 This is half of a final project for a Diachronic Linguistics (historical linguistics) course. The purpose of this half
@@ -19,7 +19,7 @@ README TOC:
     The program
 
 ------------------------------------------------------------------------------------------------------------------------
-##IPA directory                                                  
+## IPA directory                                                  
 
 The files:
 - IPAC.txt -- The consonants IPA chart
@@ -118,7 +118,7 @@ Some examples (see the IPAV table for reference to see how this works)
 
 
 ------------------------------------------------------------------------------------------------------------------------
-##Contents of a language's directory
+## Contents of a language's directory
 
 The inputs directory:
 - changes{n}.txt -- The diachronic sound changes for the language from stage n-1 to stage n
@@ -130,7 +130,7 @@ The outputs directory:
 - words0.txt -- n randomly generated words with up to m syllables per word, where n and m are user-defined
 - words{n}.txt -- All of the words from the file words0.txt after undergoing changes from the changes{n}.txt file
 
-####Input file formats
+#### Input file formats
 
 -- changes{n}.txt --
 
@@ -213,7 +213,7 @@ This file is split on bars to separate the onsets (before the first bar), nuclei
 second bar). Then, each syllable segment is split on semicolons. This allows the generator to create all the possible
 syllable combinations.
 
-####Output file formats
+#### Output file formats
 
 -- syllables.txt --
 
@@ -234,7 +234,7 @@ This file contains the words from words{n-1}.txt after having undergone the chan
 
 
 ------------------------------------------------------------------------------------------------------------------------
-##The program
+## The program
 
 
 
