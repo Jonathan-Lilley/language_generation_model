@@ -1,0 +1,42 @@
+------------------NOTES-------------------
+
+Better method for language generation:
+
+IPA symbols for use:
+IPAC.txt
+IPAV.txt
+IPACKEY.txt (includes keys for matrix for IPAC)
+IPAVKEY.txt (includes keys for matrix for IPAV)
+
+Initial phonemes and syllable structure:
+stage0_phonemes.txt
+stage0_sylstruct.txt
+
+Changes:
+stage1_changes.txt
+stage2_changes.txt
+stage3_changes.txt
+[etc]
+
+------------------------------------------
+
+IPAC
+        BLB LBD DEN ALV PAL RET PLT VEL UVL PHA LAR
+STOP    b,p 0,0 0,0 d,t 0,0 ɖ,ʈ ɟ,c g,k ɢ,q 0,0 0,ʔ
+FRIC    β,ɸ v,f ð,θ z,s ʒ,ʃ ʐ,ʂ ʝ,ç ɣ,x ʁ,χ ʕ,ħ ɦ,h
+LATF    0,0 0,0 0,0 ɮ,ɬ 0,0 0,0 0,0 0,0 0,0 0,0 0,0
+NASA    m,0 ɱ,0 0,0 n,0 0,0 ɳ,0 ɲ,0 ŋ,0 ɴ,0 0,0 0,0
+APPR    0,0 ʋ,0 0,0 ɹ,0 0,0 ɻ,0 j,0 ɰ,0 0,0 0,0 0,0
+LATA    0,0 0,0 0,0 l,0 0,0 ɭ,0 ʎ,0 ʟ,0 0,0 0,0 0,0
+TRIL    ʙ,0 0,0 0,0 r,0 0,0 0,0 0,0 0,0 ʀ,0 0,0 0,0
+FLAP    0,0 ⱱ,0 0,0 ɾ,0 0,0 ɽ,0 0,0 0,0 0,0 0,0 0,0
+
+IPAV
+        FRN CEN BAC
+CLOS    i,y ɨ,ʉ ɯ,u
+NRCL    ɪ,ʏ 0,0 0,ʊ
+MIDC    e,ø ɘ,ɵ ɤ,o
+MIDV    0,0 ə,0 0,0
+MIDO    ɛ,œ ɜ,ɞ ʌ,ɔ
+NROP    æ,0 ɐ,0 0,0
+OPEN    a,ɶ 0,0 ɑ,ɒ

@@ -1,0 +1,5 @@
+i>u/_
+a>e/+ALVE _
++STOP,VOICING:a,PLACE:a>+FRIC,VOICING:a,PLACE:a/_ +VOWL
++NASA>+NASA,PLACE:a/_ +STOP,PLACE:a
+p>0/_ #
