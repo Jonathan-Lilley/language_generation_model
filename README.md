@@ -14,9 +14,55 @@ directory files). The python files should need no modification (ideally). This m
 does not wish to spend excessive amounts of time programming but wants to utilize what this program has to offer.
 
 README TOC:
-    IPA directory
-    Contents of language directories
-    The program
+- Quick guide
+- IPA directory
+- Contents of language directories
+  - Inputs directory
+  - Outputs directory
+- The program
+  - Program usage instructions
+
+------------------------------------------------------------------------------------------------------------------------
+## Quick guide 
+
+If you wish to start using this program right away but don't care about the details of how it works, start with this
+section.
+
+The three things you need to utilize this program are:
+- A set of phonemes
+- A set of syllable rules
+- One or more sets of sound changes (optional)
+
+#### Step 1.
+
+Create a directory *MyLang* with two subdirectories, *inputs* and *outputs*
+
+#### Step 2.
+
+Create a file in the inputs directory named phonemes.txt. Enter your phonemes into this file, each separated by either a
+space or a newline, and save.
+
+#### Step 3.
+
+Create a file in the inputs directory named sylstructs.txt. Enter your syllable rules, and format them such that the 
+onset, nucleus, and coda are separated by the | symbol, and each subset of the onset, nucleus, and coda are sparated by 
+the ; symbol. For an explanation on how to use sets of phonemes, see the IPA directory section.
+
+#### Step 4.
+
+Create any number of changes#.txt files, where # starts at 1 and goes up by 1 each time. Fill these in with synchronic
+or diachronic sound change rules (see IPA directory again for explanation on sets). Sound changes will be applied from 
+first to last.
+
+#### Step 5.
+
+Run the program. In the terminal, navigate to the main directory, and enter the following command.
+
+`python createlang.py swc <my-language-directory> <max-syllable-count> <number-of-words>`
+
+This will generate all the syllables possible in the language in `<my-language-directory>`, a number of words equal to 
+`<numer-of-words>`, with words going up to length `<max-syllable-count>`, and all their evolutionary stages as described
+in your changes files. If you are opting not to have sound changes, you can remove the `c` from `swc`
 
 ------------------------------------------------------------------------------------------------------------------------
 ## IPA directory                                                  
@@ -32,15 +78,15 @@ These files can be modified to add, remove, or rearrange sounds as needed/desire
 
 -- Format of IPAC.txt --
 
-                         0   1   2   3   4   5   6   7   8   9  10
-                    0   b,p 0,0 0,0 d,t 0,0 ɖ,ʈ ɟ,c g,k ɢ,q 0,0 0,ʔ
-                    1   β,ɸ v,f ð,θ z,s ʒ,ʃ ʐ,ʂ ʝ,ç ɣ,x ʁ,χ ʕ,ħ ɦ,h
-                    2   0,0 0,0 0,0 ɮ,ɬ 0,0 0,0 0,0 0,0 0,0 0,0 0,0
-                    3   m,0 ɱ,0 0,0 n,0 0,0 ɳ,0 ɲ,0 ŋ,0 ɴ,0 0,0 0,0
-                    4   w,0 ʋ,0 0,0 ɹ,0 0,0 ɻ,0 j,0 ɰ,0 0,0 0,0 0,0
-                    5   0,0 0,0 0,0 l,0 0,0 ɭ,0 ʎ,0 ʟ,0 0,0 0,0 0,0
-                    6   ʙ,0 0,0 0,0 r,0 0,0 0,0 0,0 0,0 ʀ,0 0,0 0,0
-                    7   0,0 ⱱ,0 0,0 ɾ,0 0,0 ɽ,0 0,0 0,0 0,0 0,0 0,0
+                                 0   1   2   3   4   5   6   7   8   9  10
+                            0   b,p 0,0 0,0 d,t 0,0 ɖ,ʈ ɟ,c g,k ɢ,q 0,0 0,ʔ
+                            1   β,ɸ v,f ð,θ z,s ʒ,ʃ ʐ,ʂ ʝ,ç ɣ,x ʁ,χ ʕ,ħ ɦ,h
+                            2   0,0 0,0 0,0 ɮ,ɬ 0,0 0,0 0,0 0,0 0,0 0,0 0,0
+                            3   m,0 ɱ,0 0,0 n,0 0,0 ɳ,0 ɲ,0 ŋ,0 ɴ,0 0,0 0,0
+                            4   w,0 ʋ,0 0,0 ɹ,0 0,0 ɻ,0 j,0 ɰ,0 0,0 0,0 0,0
+                            5   0,0 0,0 0,0 l,0 0,0 ɭ,0 ʎ,0 ʟ,0 0,0 0,0 0,0
+                            6   ʙ,0 0,0 0,0 r,0 0,0 0,0 0,0 0,0 ʀ,0 0,0 0,0
+                            7   0,0 ⱱ,0 0,0 ɾ,0 0,0 ɽ,0 0,0 0,0 0,0 0,0 0,0
 
 This is the standard IPA consonants chart (although the voiced and voiceless consonants are flipped). 0 represents
 a sound not found in the IPA.
@@ -76,14 +122,14 @@ Some examples (see the IPAC table for reference to see how this works)
 
 -- Format of IPAV.txt --
 
-                                         1   2   3
-                                    1   i,y ɨ,ʉ ɯ,u
-                                    2   ɪ,ʏ 0,0 0,ʊ
-                                    3   e,ø ɘ,ɵ ɤ,o
-                                    4   0,0 ə,0 0,0
-                                    5   ɛ,œ ɜ,ɞ ʌ,ɔ
-                                    6   æ,0 ɐ,0 0,0
-                                    7   a,ɶ 0,0 ɑ,ɒ
+                                                 1   2   3
+                                            1   i,y ɨ,ʉ ɯ,u
+                                            2   ɪ,ʏ 0,0 0,ʊ
+                                            3   e,ø ɘ,ɵ ɤ,o
+                                            4   0,0 ə,0 0,0
+                                            5   ɛ,œ ɜ,ɞ ʌ,ɔ
+                                            6   æ,0 ɐ,0 0,0
+                                            7   a,ɶ 0,0 ɑ,ɒ
 
 This is the standard IPA chart for vowels. Note that there are 7 height levels instead of 4: 2 and 6 represent
 near-closed and near-open, respectively, since they do not have their own formal tiers in the IPA; 4 represents mid,
@@ -193,8 +239,8 @@ the context phonemes in some aspect.
 This textfile contains all the phonemes used for stage 0 of the language.
 This is the format:
 
-                                    i ɪ e ɛ u ʊ o ɔ a
-                                    p b f d t s n ɹ l g k
+                                        i ɪ e ɛ u ʊ o ɔ a
+                                        p b f d t s n ɹ l g k
 
 The file can have any number of lines for organization's sake, so long as all the phonemes are separated by either a
 single space or a newline.
@@ -236,22 +282,48 @@ This file contains the words from words{n-1}.txt after having undergone the chan
 ------------------------------------------------------------------------------------------------------------------------
 ## The program
 
+The files:
+- createlang.py
+- helpers.py
+- IPA.py
+- soundchange.py
+- sylconstr.py
+- wordconstr.py
+- zipper.py
 
+#### createlang.py
 
+This is the main program file. This program takes in 2-4 arguments:
+- `swc` -- syllables, words, changes. This argument, which can consist of the letters 's', 'w', and/or 'c', tells the 
+program what to construct. If s, it constructs the syllables. If w, it constructs words. If c, it implements changes.
+- `dir` -- the directory of the language to be created or modified.
+- `<max syls>` -- maximum number of syllables in a word. (Only used with c argument)
+- `<words>` -- number of words to create. (Only used with c argument)
 
+The program itself functions by going through the main functions of soundchange.py, sylconstr.py, and wordconstr.py.
 
+#### helpers.py
 
+This program really only contains one helper, increment. It is used to increment array values to help iterate through
+permutations for syllable construction, etc.
 
+#### IPA.py
 
+This file reads in the IPA directory and processes the text files to be used in other parts of the program.
 
+#### soundchange.py
 
+This file implements the sound changes in each sound change file.
 
+#### sylconstr.py
 
+This file constructs all possible syllables given phoneme and sylstruct files in a language's input directory.
 
+#### wordconstr.py
 
+This file constructs the input number of words given the syllables generated by sylconstr.py
 
+#### zipper.py
 
-
-
-
-
+This special file is for aligning two stages of a language for use in a neural network (part 2 of the project this was
+designed for).
