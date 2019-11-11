@@ -1,4 +1,10 @@
-###########################################   LANGUAGE GENERATOR   #####################################################
+------------------------------------------------------------------------------------------------------------------------
+------------------------------------------------------------------------------------------------------------------------
+------------------------------------------------------------------------------------------------------------------------
+                                             LANGUAGE GENERATOR
+------------------------------------------------------------------------------------------------------------------------
+------------------------------------------------------------------------------------------------------------------------
+------------------------------------------------------------------------------------------------------------------------
 
 Overview:
 
@@ -19,6 +25,7 @@ README TOC:
     Contents of language directories
     The program
 
+------------------------------------------------------------------------------------------------------------------------
 ------------------------------------------------------------------------------------------------------------------------
                                                   IPA directory
 
@@ -119,6 +126,7 @@ ROND 1,2;2 -- Round vowels
 
 
 ------------------------------------------------------------------------------------------------------------------------
+------------------------------------------------------------------------------------------------------------------------
                                       Contents of a language's directory
 
 The inputs directory:
@@ -165,22 +173,22 @@ a>æ/+CONS _ +CONS
     *Lateral approximants assimilate to place of articulation before approximants
 
 *** \*NOTE ABOUT {X}:a ***
-    All rules above marked with * contain at least two phoneme set descriptors with an attribute {X}:a.
-    This notation has one function that is used in two ways. It is based on α-notation (alpha-notation).
+All rules above marked with * contain at least two phoneme set descriptors with an attribute {X}:a.
+This notation has one function that is used in two ways. It is based on α-notation (alpha-notation).
 
-    Function: This notation tells the program to create multiple rules based on one rule, replacing the attribute with
-    all its possible realizations (PLACE>BILA,LABD,DENT,etc;ROUNDING>ROND,URND;etc) -- but specifically, it will always
-    replace {X}:a with the same realization. In other words, {X}:a will generate a set of parallel rules. Example:
-    PLACE:a>+STOP,PLACE:a becomes +BILA>+STOP,+BILA; +ALVE>+STOP,+ALVE; etc.
+Function: This notation tells the program to create multiple rules based on one rule, replacing the attribute with
+all its possible realizations (PLACE>BILA,LABD,DENT,etc;ROUNDING>ROND,URND;etc) -- but specifically, it will always
+replace {X}:a with the same realization. In other words, {X}:a will generate a set of parallel rules. Example:
+PLACE:a>+STOP,PLACE:a becomes +BILA>+STOP,+BILA; +ALVE>+STOP,+ALVE; etc.
 
-    Use 1: This allows for us to make sure all sound that change in one attribute to retain their other attributes. This
-    is because if we input a traditional rule STOP>VOICED/_VOICED, where t would become d before b, g, etc., unless we
-    use this specific strategy, t will become _all_ voiced stops before voiced consonants. In other words, t will become
-    b and g as well as d. The {X}:a format requires all stops tht become voiced to retain their other qualities. Thus,
-    t will only become d.
+Use 1: This allows for us to make sure all sound that change in one attribute to retain their other attributes. This
+is because if we input a traditional rule STOP>VOICED/_VOICED, where t would become d before b, g, etc., unless we
+use this specific strategy, t will become _all_ voiced stops before voiced consonants. In other words, t will become
+b and g as well as d. The {X}:a format requires all stops tht become voiced to retain their other qualities. Thus,
+t will only become d.
 
-    Use 2: We can also use it for the traditional usage of alpha. In this case, we can make the output phoneme mirror
-    the context phonemes in some aspect.
+Use 2: We can also use it for the traditional usage of alpha. In this case, we can make the output phoneme mirror
+the context phonemes in some aspect.
 
 
 -- phonemes.txt --
