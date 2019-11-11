@@ -1,11 +1,4 @@
-------------------------------------------------------------------------------------------------------------------------
-------------------------------------------------------------------------------------------------------------------------
-------------------------------------------------------------------------------------------------------------------------
-                                             LANGUAGE GENERATOR
-------------------------------------------------------------------------------------------------------------------------
-------------------------------------------------------------------------------------------------------------------------
-------------------------------------------------------------------------------------------------------------------------
-
+#Language Generation Model
 Overview:
 
 This is half of a final project for a Diachronic Linguistics (historical linguistics) course. The purpose of this half
@@ -26,29 +19,28 @@ README TOC:
     The program
 
 ------------------------------------------------------------------------------------------------------------------------
-------------------------------------------------------------------------------------------------------------------------
-                                                  IPA directory
+##IPA directory                                                  
 
 The files:
-IPAC.txt -- The consonants IPA chart
-IPAV.txt -- The vowels IPA chart
-IPACKEY.txt -- The lookup keys for IPAC.txt
-IPAVKEY.txt -- The lookup keys for IPAV.txt
+- IPAC.txt -- The consonants IPA chart
+- IPAV.txt -- The vowels IPA chart
+- IPACKEY.txt -- The lookup keys for IPAC.txt
+- IPAVKEY.txt -- The lookup keys for IPAV.txt
 
 These files can be modified to add, remove, or rearrange sounds as needed/desired.
 
 
 -- Format of IPAC.txt --
 
-                                 0   1   2   3   4   5   6   7   8   9  10
-                            0   b,p 0,0 0,0 d,t 0,0 ɖ,ʈ ɟ,c g,k ɢ,q 0,0 0,ʔ
-                            1   β,ɸ v,f ð,θ z,s ʒ,ʃ ʐ,ʂ ʝ,ç ɣ,x ʁ,χ ʕ,ħ ɦ,h
-                            2   0,0 0,0 0,0 ɮ,ɬ 0,0 0,0 0,0 0,0 0,0 0,0 0,0
-                            3   m,0 ɱ,0 0,0 n,0 0,0 ɳ,0 ɲ,0 ŋ,0 ɴ,0 0,0 0,0
-                            4   w,0 ʋ,0 0,0 ɹ,0 0,0 ɻ,0 j,0 ɰ,0 0,0 0,0 0,0
-                            5   0,0 0,0 0,0 l,0 0,0 ɭ,0 ʎ,0 ʟ,0 0,0 0,0 0,0
-                            6   ʙ,0 0,0 0,0 r,0 0,0 0,0 0,0 0,0 ʀ,0 0,0 0,0
-                            7   0,0 ⱱ,0 0,0 ɾ,0 0,0 ɽ,0 0,0 0,0 0,0 0,0 0,0
+                         0   1   2   3   4   5   6   7   8   9  10
+                    0   b,p 0,0 0,0 d,t 0,0 ɖ,ʈ ɟ,c g,k ɢ,q 0,0 0,ʔ
+                    1   β,ɸ v,f ð,θ z,s ʒ,ʃ ʐ,ʂ ʝ,ç ɣ,x ʁ,χ ʕ,ħ ɦ,h
+                    2   0,0 0,0 0,0 ɮ,ɬ 0,0 0,0 0,0 0,0 0,0 0,0 0,0
+                    3   m,0 ɱ,0 0,0 n,0 0,0 ɳ,0 ɲ,0 ŋ,0 ɴ,0 0,0 0,0
+                    4   w,0 ʋ,0 0,0 ɹ,0 0,0 ɻ,0 j,0 ɰ,0 0,0 0,0 0,0
+                    5   0,0 0,0 0,0 l,0 0,0 ɭ,0 ʎ,0 ʟ,0 0,0 0,0 0,0
+                    6   ʙ,0 0,0 0,0 r,0 0,0 0,0 0,0 0,0 ʀ,0 0,0 0,0
+                    7   0,0 ⱱ,0 0,0 ɾ,0 0,0 ɽ,0 0,0 0,0 0,0 0,0 0,0
 
 This is the standard IPA consonants chart (although the voiced and voiceless consonants are flipped). 0 represents
 a sound not found in the IPA.
@@ -58,7 +50,7 @@ better)
 
 -- Format of IPACKEY.txt --
 
-                                        ATTRIBUTE range,range;dimension
+       ATTRIBUTE range,range;dimension
 where
     ATTRIBUTE = 4-letter abbreviation for attribute name
     range,range = bottom to top of index range
@@ -73,25 +65,25 @@ and syllable rules in mind, specifically for constructing syllables and implemen
 
 Some examples (see the IPAC table for reference to see how this works)
 
-CONS 0,0;0 -- All consonants (this is special, the IPA reading file will interpret this value as instructions to fill in
+- CONS 0,0;0 -- All consonants (this is special, the IPA reading file will interpret this value as instructions to fill in
                 the entire chart)
-NASA 3,4;0 -- Nasals
-CONT 1,5;0 -- Continuants
-DENT 2,3;1 -- Dentals
-DORS 5,11;1 -- Dorsals
-VLSS 1,2;2 -- Voiceless
+- NASA 3,4;0 -- Nasals
+- CONT 1,5;0 -- Continuants
+- DENT 2,3;1 -- Dentals
+- DORS 5,11;1 -- Dorsals
+- VLSS 1,2;2 -- Voiceless
 
 
 -- Format of IPAV.txt --
 
-                                                     1   2   3
-                                                1   i,y ɨ,ʉ ɯ,u
-                                                2   ɪ,ʏ 0,0 0,ʊ
-                                                3   e,ø ɘ,ɵ ɤ,o
-                                                4   0,0 ə,0 0,0
-                                                5   ɛ,œ ɜ,ɞ ʌ,ɔ
-                                                6   æ,0 ɐ,0 0,0
-                                                7   a,ɶ 0,0 ɑ,ɒ
+                                         1   2   3
+                                    1   i,y ɨ,ʉ ɯ,u
+                                    2   ɪ,ʏ 0,0 0,ʊ
+                                    3   e,ø ɘ,ɵ ɤ,o
+                                    4   0,0 ə,0 0,0
+                                    5   ɛ,œ ɜ,ɞ ʌ,ɔ
+                                    6   æ,0 ɐ,0 0,0
+                                    7   a,ɶ 0,0 ɑ,ɒ
 
 This is the standard IPA chart for vowels. Note that there are 7 height levels instead of 4: 2 and 6 represent
 near-closed and near-open, respectively, since they do not have their own formal tiers in the IPA; 4 represents mid,
@@ -102,7 +94,7 @@ better)
 
 -- Format of IPAVKEY.txt --
 
-                                        ATTRIBUTE range,range;dimension
+      ATTRIBUTE range,range;dimension
 where
     ATTRIBUTE = 4-letter abbreviation for attribute name
     range,range = bottom to top of index range
@@ -117,17 +109,16 @@ and syllable rules in mind, specifically for constructing syllables and implemen
 
 Some examples (see the IPAV table for reference to see how this works)
 
-VOWL 0,0;0 -- All vowels (see: all consonants in previous section for explanation)
-MIDC 2,3;0 -- Mid-closed vowels
-MIDV 3,4;0 -- Mid-vowels (schwa)
-CENT 1,2;1 -- Central vowels
-ROND 1,2;2 -- Round vowels
+- VOWL 0,0;0 -- All vowels (see: all consonants in previous section for explanation)
+- MIDC 2,3;0 -- Mid-closed vowels
+- MIDV 3,4;0 -- Mid-vowels (schwa)
+- CENT 1,2;1 -- Central vowels
+- ROND 1,2;2 -- Round vowels
 
 
 
 ------------------------------------------------------------------------------------------------------------------------
-------------------------------------------------------------------------------------------------------------------------
-                                      Contents of a language's directory
+##Contents of a language's directory
 
 The inputs directory:
 - changes{n}.txt -- The diachronic sound changes for the language from stage n-1 to stage n
@@ -139,28 +130,32 @@ The outputs directory:
 - words0.txt -- n randomly generated words with up to m syllables per word, where n and m are user-defined
 - words{n}.txt -- All of the words from the file words0.txt after undergoing changes from the changes{n}.txt file
 
-
-                                             Input file formats
+####Input file formats
 
 -- changes{n}.txt --
 
 This text file takes the form of classic rewrite rules found in synchronic and diachronic phonology.
 The following is the general format:
-                                                i>o/c1 _ c2
+
+    i>o/c1 _ c2
+
 where
-    i = input phoneme
-    > = becomes
-    o = output phoneme
-    / = in the context of
-    c1 = context 1
-    _ = position of i
-    c2 = context 2
+```
+i = input phoneme
+> = becomes
+o = output phoneme
+/ = in the context of
+c1 = context 1
+_ = position of i
+c2 = context 2
+```
 
 Further detail:
 i, o, c1, and c2 can take the form of individual phonemes (or sequences of phonemes in the case of c1 and c2), or they
 can take the form of phoneme set descriptors. These phoneme set descriptors can be modified in the IPACKEY.txt and
 IPAVKEY.txt files. See the IPA section above for explanation of how these descriptors work.
 
+```
 w>0/_ +CLOS,+BACK
     w deletes before closed back vowels
 s>θ/# _
@@ -171,8 +166,10 @@ a>æ/+CONS _ +CONS
     *Near closed back vowels become their closed counterparts everywhere
 *+LATA>+LATA,PLACE:a/_ +APPR,PLACE:a
     *Lateral approximants assimilate to place of articulation before approximants
+```
 
-*** \*NOTE ABOUT {X}:a ***
+*** NOTE ABOUT {X}:a ***
+
 All rules above marked with * contain at least two phoneme set descriptors with an attribute {X}:a.
 This notation has one function that is used in two ways. It is based on α-notation (alpha-notation).
 
@@ -196,8 +193,8 @@ the context phonemes in some aspect.
 This textfile contains all the phonemes used for stage 0 of the language.
 This is the format:
 
-                                            i ɪ e ɛ u ʊ o ɔ a
-                                            p b f d t s n ɹ l g k
+                                    i ɪ e ɛ u ʊ o ɔ a
+                                    p b f d t s n ɹ l g k
 
 The file can have any number of lines for organization's sake, so long as all the phonemes are separated by either a
 single space or a newline.
@@ -208,14 +205,15 @@ single space or a newline.
 This textfile contains the rules required for syllable structures.
 This is the format:
 
-                   ;+CONS;+CONS,-APPR +APPR;p f;t s;s n|+VOWL|;+CONS;+APPR +CONS,-APPR;f p;s t;n s
+```
++CONS;+CONS,-APPR +APPR;p f|+VOWL|;+CONS;+APPR +CONS,-APPR;f p;
+```
 
 This file is split on bars to separate the onsets (before the first bar), nuclei (between bars), and codas (after
 second bar). Then, each syllable segment is split on semicolons. This allows the generator to create all the possible
 syllable combinations.
 
-
-                                             Output file formats
+####Output file formats
 
 -- syllables.txt --
 
@@ -236,7 +234,7 @@ This file contains the words from words{n-1}.txt after having undergone the chan
 
 
 ------------------------------------------------------------------------------------------------------------------------
-                                                The program
+##The program
 
 
 
