@@ -143,6 +143,13 @@ def changeWord(word, rule):
     word += '#'
     # Sets up input phoneme, output phoneme, and environment
     inphon, outphon, environ = parseRule(rule)
+    # If epenthesis, insert 0 between every character to search for epenthesis context
+    if inphon == '0':
+        newword = '0'
+        for letter in word:
+            newword += letter+'0'
+        word = newword
+    # Creates a substring that is the environment to find in and a replacement substring
     findenviron = replaceSubstring(environ,'_',inphon)
     replacement = replaceSubstring(environ,'_',outphon)
     # Replaces environment with replacement environment
