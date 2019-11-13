@@ -68,6 +68,16 @@ def findSet(features, IPASTUFF):
     ranges = [[],[],[]]
     phonemes = []
     feats = features.split(',')
+    for feat in range(len(feats)):
+        for f in range(len(feats[:feat])):
+            if feats[feat][0] == '+':
+                if feats[f] == '-'+feats[feat][1:]:
+                    phonemes.append("NULL SET")
+                    return phonemes
+            if feats[feat][0] == '-':
+                if feats[f] == '+'+feats[feat][1:]:
+                    phonemes.append("NULL SET")
+                    return phonemes
     # Sets consonant or vowel
     if feats[0][1:] in IPACKEY:
         phonemeset = IPAC

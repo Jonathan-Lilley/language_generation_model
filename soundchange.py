@@ -124,7 +124,7 @@ def generateRules(rule,phonemes,IPA_info):
         # Iterates through all parts of the rule
         # Rules are slightly filtered for speed
         for inphon in inphons:
-            if inphon in phonemes: # Includes only rules with input phonemes in the original phoneme set
+            if inphon in phonemes+['0']: # Includes only rules with input phonemes in the original phoneme set
                 for outphon in outphons:
                     if outphon != inphon: # Excludes identity rules
                         for environ in environments:
@@ -143,6 +143,21 @@ def changeWord(word, rule):
     word += '#'
     # Sets up input phoneme, output phoneme, and environment
     inphon, outphon, environ = parseRule(rule)
+    # If epenthesis, insert 0 between every character in word and environment to search for epenthesis context
+    if inphon == '0':
+        newword = '0'
+        for letter in word:
+            newword += letter+'0'
+        word = newword
+        newenviron = '0'
+        for l in range(len(environ)-1):
+            if environ[l] != '_' and environ[l+1] != '_':
+                newenviron += environ[l]+'0'
+            else:
+                newenviron += environ[l]
+        newenviron += environ[-1]+'0'
+        environ = newenviron
+    # Creates a substring that is the environment to find in and a replacement substring
     findenviron = replaceSubstring(environ,'_',inphon)
     replacement = replaceSubstring(environ,'_',outphon)
     # Replaces environment with replacement environment
@@ -188,7 +203,6 @@ def allChanges(dir):
         for soundchange in soundchanges:
             newchange = generateRules(soundchange,phonemes,IPA_info)
             for change in newchange:
-                print(change)
                 words = changeSound(words, change)
         outfile.write('\n'.join(words)) # puts changed words into the output file for use in the next iteration
         outfile.close()
