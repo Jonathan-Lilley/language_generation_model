@@ -1,8 +1,0 @@
-a>ə/_
-+FRIC>h/_
-0>+STOP,+VOID,PLACE:a/+NASA,PLACE:a _
-ɬ>m/_
-ɮ>n/_
-+APPR,+LATA>0/# _
-+APPR,+LATA>0/_ #
-+PALT,MANNER:a,VOICING:a>+DENT,MANNER:a,VOICING:a/_

@@ -1,7 +1,0 @@
-+NASA,PLACE:a>0/_ +STOP,+VOID,PLACE:a
-ə>0/_
-e>a/_
-b>p/_
-h>0/_
-+VOWL>o/_ l
-l>r/+SONO _ +SONO
