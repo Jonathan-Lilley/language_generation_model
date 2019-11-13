@@ -161,7 +161,18 @@ Some examples (see the IPAV table for reference to see how this works)
 - CENT 1,2;1 -- Central vowels
 - ROND 1,2;2 -- Round vowels
 
+*** NOTES ***
 
+- Digraphs are accounted for, and encouraged if they help, but it is recommended that you
+only use digraph symbols for one concept and you do not reuse symbols found elsewhere in the IPA (e.g. gW, kW, dW for
+labialized stops, aN, oN, uN for nasalized vowels).
+- It is recommended that when editing the charts, you minimize the work you have to do for yourself while still making
+it functional for your own purposes. For example, if modeling French vowels, it would be recommended to add a third and
+fourth value to the roundness dimension (2). This way, you can have ɛ,œ,ɛN,œN where N means nasalized, and you do the
+same for all other nasal vowels. If you do this, it is easy to add NASL 2,4;2 (nasalized), URNA 2,3;2 (unround nasal),
+and RONA 3,4;2 (rounded nasal) to the IPAVKEY file. This minimizes the work you have to do adjusting the IPAVKEY file.
+If you only have a few sounds to add, such as labialized stops, it may be easier or make more sense to simply add a new
+row or column for them. Again, if you do this, be sure to adjust the KEY files.
 
 ------------------------------------------------------------------------------------------------------------------------
 ## Contents of a language's directory

@@ -1,0 +1,46 @@
+Stage 0 phonemes:
+m     n ɳ ɲ ŋ ɴ
+b     t   c k
+    θ       ɣ   h
+  ʋ   l   ʎ
+ɬ     ɮ
+  ⱱ
+
+i u e a
+
+Stage 1 changes:
+1. a > ə / _
+2. +FRIC > h / _
+3. 0 > +STOP,PLACE:a / +NASA,PLACE:a _
+4. ɬ>m / _
+5. ɮ>n / _
+6. +APPR > 0 / {# _ | _ #}
+7. +PALT > +DENT / _
+
+Stage 1 phonemes:
+m(b)   n(d) ŋ(g) ɴ(q)
+b      t    k
+                    h
+    ʋ  l
+ɬ      ɮ
+    ⱱ
+
+i u e a ə
+
+Stage 2 changes:
+1. +NASA,PLACE:a > 0 / _ +STOP,+VOID,PLACE:a
+2. ə > 0 / _
+3. e > a / _
+4. b > p / _
+5. h > 0 / _
+6. +VOWL > o / _ l
+7. l > r / +SONO _ +SONO
+
+Stage 2 phonemes: (stuff)
+b      t    k
+                    h
+    ʋ  l
+ɬ      ɮ
+    ⱱ
+
+i u a o

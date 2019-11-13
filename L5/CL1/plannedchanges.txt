@@ -1,0 +1,39 @@
+Stage 0 phonemes:
+m     n ɳ ɲ ŋ ɴ
+b     t   c k
+    θ       ɣ   h
+  ʋ   l   ʎ
+    ɬ ɮ
+  ⱱ
+
+i u e a
+
+Stage 1 changes:
+1. +CLOS > +MIDC / +NASA _
+2. +MIDC > +MIDO / +NASA _
+3. ⱱ > v / # _
+4. b > v / _
+5. ɣ > ɰ / +SONO _ +SONO
+6. +LATF > h / {# _ | _ #}
+7. +BACK > +FRNT / {+PALA _ | _ +PALA}
+8. ɴ > ŋ / _
+9. +DENT,+RETR > +ALVE / _
+
+Stage 1 phonemes:
+m   n   ɳ ɲ ŋ
+    t     c k
+  v s       ɣ h
+  ʋ l     ʎ ɰ
+ɬ      ɮ
+  ⱱ
+
+i u o e æ a
+
+Stage 2 changes:
+1. a > ə / _
+2. æ > a / _
+3. +LABI,-NASA > v / _
+4. 0 > i / +PALT _
+5. +PALT,MANNER:a,VOICING:a > +ALVE,MANNER:a,VOICING:a / _
+6. ɰ > 0 / +SONO _ +SONO
+7. m > v / _ #

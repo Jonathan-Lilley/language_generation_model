@@ -1,0 +1,7 @@
+a>ə/_
+æ>a/_
++LABI,-NASA>v/_
+0>i/+PALT _
++PALT,MANNER:a,VOICING:a>+ALVE,MANNER:a,VOICING:a/_
+ɰ>0/+SONO _ +SONO
+m>v/_ #
