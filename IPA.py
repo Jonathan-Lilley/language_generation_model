@@ -69,15 +69,12 @@ def findSet(features, IPASTUFF):
     phonemes = []
     feats = features.split(',')
     for feat in range(len(feats)):
-        for f in range(len(feats[:feat])):
-            if feats[feat][0] == '+':
-                if feats[f] == '-'+feats[feat][1:]:
-                    phonemes.append("NULL SET")
-                    return phonemes
-            if feats[feat][0] == '-':
-                if feats[f] == '+'+feats[feat][1:]:
-                    phonemes.append("NULL SET")
-                    return phonemes
+        if feats[feat][0] == '-' and '+'+feats[feat][1:] in feats[feat:]:
+            phonemes.append("NULL SET")
+            return phonemes
+        elif feats[feat][0] == '+' and '-'+feats[feat][1:] in feats[feat:]:
+            phonemes.append("NULL SET")
+            return phonemes
     # Sets consonant or vowel
     if feats[0][1:] in IPACKEY:
         phonemeset = IPAC
@@ -131,30 +128,3 @@ def filterPhonemes(phonemes, phonemeset):
         if phoneme in phonemeset:
             filtered.append(phoneme)
     return filtered
-
-if __name__ == "__main__":
-
-    IPASTUFF = readInIPA()
-
-    print("TEST ONE")
-    featuresets = ["+CONS","+STOP","+BILA","+VOID","+VOWL","+CLOS","+FRNT","+URND"]
-    for feat in featuresets:
-        print(feat)
-        print(findSet(feat,IPASTUFF))
-        print("\n")
-
-    print("############################")
-
-    print("TEST TWO")
-    featuresets = ["+STOP,+NASA","+STOP,+ALVE","+OBST","+STOP,-VOID","+STOP,-ALVE","+OBST,-STOP"]
-    for feat in featuresets:
-        print(feat)
-        print(findSet(feat,IPASTUFF))
-        print("\n")
-
-    print("TEST THREE")
-    features = ["+STOP,+ALVE,+VOID"]
-    for feats in features:
-        print(feats)
-        print(findPhoneme(feats,IPASTUFF))
-        print("\n")

@@ -91,7 +91,3 @@ def constructSyls(dir):
             sylset = []
     out.write('\n'.join(sylset))
     out.close()
-
-
-if __name__ == "__main__":
-    constructSyls('L1')

@@ -1,5 +1,5 @@
 '''             CREATE LANGUAGE             '''
-# This file creates an entire language with all stages given an input directory
+# This file creates an entire language with all stages given an input direcectory
 
 import sylconstr
 import wordconstr
@@ -7,34 +7,41 @@ import soundchange
 import sys
 import os
 
+class DirNotFound(Exception):
+    pass
 
-def createLanguage(swc,dir,syls,wordcount):
+# Goes through each creation step inputted
+def createLanguage(swc,direct,syls,wordcount):
     if 's' in swc:
-        sylconstr.constructSyls(dir)
+        sylconstr.constructSyls(direct)
     if 'w' in swc:
-        wordconstr.makeWords(dir,syls,wordcount)
+        wordconstr.makeWords(direct,syls,wordcount)
     if 'c' in swc:
-        soundchange.allChanges(dir)
+        soundchange.allChanges(direct)
 
-
+# This program is meant to be run as a main program, so it has a __main__ function.
+# Explanation and instructions in the README
 if __name__ == "__main__":
-    arguments = sys.argv[1:]
-    swc = arguments[0]
-    dir = arguments[1]
+    arguments = sys.argv[1:] # gets arguments as a list
     abort = False
-    try:
-        if len(os.listdir(dir)) == 0:
-            print(dir,"is empty. Aborting.")
+    if len(arguments) > 1:
+        swc = arguments[0]
+        direct = arguments[1]
+    else:
+        print("Not enough arguments. Please enter at least syllable/word/change (swc) mode and language directory.")
+        sys.exit()
+    if direct in os.listdir("."):
+        if len(os.listdir(direct)) == 0:
+            print(direct,"is empty. Aborting.")
             abort = True
-        else:
-            if 'inputs' not in os.listdir(dir):
-                print(dir,"does not have an inputs directory. Aborting.")
-                abort = True
-            if 'outputs' not in os.listdir(dir):
-                print(dir,"does not have an outputs directory. Aborting.")
-                abort = True
-    except IOError:
-        print(dir,"does not exist. Aborting.")
+    else:
+        print(direct,"does not exist. Aborting.")
+        sys.exit()
+    if 'inputs' not in os.listdir(direct):
+        print(direct,"does not have an inputs directory. Aborting.")
+        abort = True
+    if 'outputs' not in os.listdir(direct):
+        print(direct,"does not have an outputs directory. Aborting.")
         abort = True
     if not abort:
         syls = 3
@@ -43,4 +50,4 @@ if __name__ == "__main__":
         wordcount = 10000
         if len(arguments) > 3:
             wordcount = int(sys.argv[4])
-        createLanguage(swc,dir,syls,wordcount)
+        createLanguage(swc,direct,syls,wordcount)

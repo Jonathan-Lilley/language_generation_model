@@ -50,19 +50,10 @@ def makeWords(dir, numSyls, numwords):
     wordnums = sylstats
     for i in range(len(sylstats)):
         wordnums[i] = int(numwords//(1/sylstats[i]))
+    if sum(wordnums) != numwords:
+        wordnums[-1] = numwords-sum(wordnums[:-1])
     # Generate words for each syllable level
     for sylnum in range(numSyls):
         words += genWords(syls, sylnum+1, wordnums[sylnum])
     wordfile.write('\n'.join(words))
     wordfile.close()
-
-
-if __name__ == "__main__":
-    makeWords('L2',2,100)
-    print(100)
-    makeWords('L2',2,500)
-    print(500)
-    makeWords('L2',2,1000)
-    print(1000)
-    makeWords('L2',3,10000)
-    print("three syllables")

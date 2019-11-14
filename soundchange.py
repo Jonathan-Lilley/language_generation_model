@@ -4,20 +4,27 @@ import IPA
 import helpers
 import os
 
+# Checks to see if two parts of a string are identical
+# Part of findSubstring
+# Input i is initial index
+def checkIdent(string, substring, i):
+    j = 0
+    while j < len(substring) and i + j < len(string):
+        if string[i + j] == substring[j]:
+            j += 1
+            if j == len(substring):
+                return True
+        else:
+            return False
+
 # Finds index of a substring within a string
 def findSubstring(string, substring):
     i = 0
-    j = 0
     while i < len(string):
-        if string[i] == substring[j]:
-            while j < len(substring) and i+j < len(string):
-                if string[i+j] == substring[j]:
-                    j += 1
-                    if j == len(substring):
-                        return i
-                else:
-                    break
-            j = 0
+        if string[i] == substring[0]:
+            ident = checkIdent(string, substring, i)
+            if ident:
+                return i
         i += 1
     return -1
 
@@ -32,14 +39,19 @@ def replaceSubstring(string, substring, replstr):
 # Replaces alpha features
 def replaceAlpha(rule,IPA_info):
     pmvhbr = IPA_info[4] # places, manners, voicings, heights, backnesses, roudnings
+    # Sets up arrays and bool max
     present = []
     rules = []
     replacements = []
     indexes = []
     maxindexes = []
     max = False
-    if findSubstring(rule, "a") == -1:
+    # Checks if there is an alpha value in the rule
+    if findSubstring(rule, "a") == -1: # If not, add the rule as is
         rules.append(rule)
+    # If so, generate all alpha replacement rules
+    # replacements is an array of arrays where the subarrays are the place/manner/voicing/etc value arrays
+    # present indicates if a particular alpha value is present
     else:
         if findSubstring(rule, "PLACE:a") != -1:
             replacements.append(pmvhbr[0])
@@ -59,19 +71,24 @@ def replaceAlpha(rule,IPA_info):
         if findSubstring(rule, "ROUNDING:a") != -1:
             replacements.append(pmvhbr[5])
             present.append("ROUNDING:a")
+        # Sets up indexes and max index values
         for aspect in replacements:
             indexes.append(0)
             maxindexes.append(len(aspect)-1)
+        # Goes through and replaces all alpha instances in all combinations
         while not max:
+            # initializes newrule as rule so newrule can have its alpha features replaced
             newrule = rule
+            # Replaces all alpha values present with current iteration's values
             for aspect in range(len(replacements)):
                 newrule = replaceSubstring(newrule,present[aspect],replacements[aspect][indexes[aspect]])
             rules.append(newrule)
-            indexes, max = helpers.increment(indexes,maxindexes)
+            indexes, max = helpers.increment(indexes,maxindexes) # Next iteration
     return rules
 
 # Expands environment rules to generate all possible environment rules
 def generateEnvirons(environment,IPA_info):
+    IPA_info = IPA_info[:4]
     eles = environment.split(' ')
     environments = []
     phonsets = []
@@ -80,24 +97,21 @@ def generateEnvirons(environment,IPA_info):
     max = False
     # Creates a phoneme set for each element of the environment
     for ele in eles:
-        if len(ele) > 1:
-            phonsets.append(IPA.findSet(ele,IPA_info[:4]))
-        else:
-            phonsets.append([ele])
+        phonsets.append(IPA.findSet(ele,IPA_info))
     # Creates index arrays to keep track of phoneme set indexes
     for phonset in phonsets:
         indexes.append(0)
         maxindexes.append(len(phonset) - 1)
     # Iterates through all possible combinations of syllables based on phoneme sets and order, using indexes array to
     #       keep track of position within the phoneme sets
-    if -1 in maxindexes:
+    if -1 in maxindexes: # Returns empty array if any phonemeset is empty
         return []
-    while not max:
+    while not max: # Otherwise, generates all environments
         environ = ''
         for l in range(len(phonsets)):
             environ += phonsets[l][indexes[l]]
         environments.append(environ)
-        indexes, max = helpers.increment(indexes, maxindexes)
+        indexes, max = helpers.increment(indexes, maxindexes) # Moves to next iteration
     return environments
 
 # Parses a rule into the input phoneme, the output phoneme, and the environment
@@ -106,6 +120,34 @@ def parseRule(rule):
     inphon = rule[0]
     outphon, environment = rule[1].split('/')
     return inphon, outphon, environment
+
+# Generates valid rules and ignores invalid rules
+# Rules are slightly filtered for accuracy and efficiency
+def validRule(ioe,indexes,phonemes):
+    inphons, outphons, environments = ioe
+    # Sets up validity variables
+    validenviron = True
+    validinphon = True
+    validoutphon = True
+    # Gets phonemes and environments
+    inphon = inphons[indexes[0]]
+    outphon = outphons[indexes[1]]
+    environ = environments[indexes[2]]
+    # Checks if inphon is in phonemes or is 0; cuts down on rules
+    if inphon not in phonemes + ['0']:
+        validinphon = False
+    # Checks if outphon is inphon -- aka identity; ignores rule if it is, cuts down on rules
+    if outphon == inphon:
+        validoutphon = False
+    # Checks each phoneme in environ
+    for phon in environ:
+        # If it's not in phonemes or if it isnt # or _, ignores rule; cuts down on rules
+        if phon not in phonemes and phon not in '#_':
+            validenviron = False
+    rule = inphon + '>' + outphon + '/' + environ
+    if validinphon and validoutphon and validenviron:
+        return rule, True
+    return rule, False
 
 # Generates all phoneme rules based on feature rules
 def generateRules(rule,phonemes,IPA_info):
@@ -122,18 +164,17 @@ def generateRules(rule,phonemes,IPA_info):
         outphons = IPA.findSet(outphonset,info_short)
         environments = generateEnvirons(environment,IPA_info)
         # Iterates through all parts of the rule
-        # Rules are slightly filtered for speed
-        for inphon in inphons:
-            if inphon in phonemes+['0']: # Includes only rules with input phonemes in the original phoneme set
-                for outphon in outphons:
-                    if outphon != inphon: # Excludes identity rules
-                        for environ in environments:
-                            inphonemeset = True
-                            for phon in environ:
-                                if phon not in phonemes and phon not in '#_':
-                                    inphonemeset = False
-                            if inphonemeset == True:
-                                rules.append(inphon+'>'+outphon+'/'+environ)
+        ioe = [inphons, outphons, environments]
+        maxindexes = [len(inphons)-1,len(outphons)-1,len(environments)-1]
+        indexes = [0,0,0]
+        max = False
+        while not max:
+            # Generates a rule and returns a value to define if the rule is valid
+            validrule, valid = validRule(ioe,indexes,phonemes)
+            if valid: # If the rule is valid...
+                rules.append(validrule) # Add the rule
+            # Move on to next potential rule
+            indexes, max = helpers.increment(indexes,maxindexes)
     return rules
 
 
@@ -177,6 +218,7 @@ def changeSound(words, rule):
         newWords.append(changeWord(word,rule))
     return newWords
 
+
 # Implements all sound changes
 def allChanges(dir):
     filelist = os.listdir(dir+'/inputs')
@@ -192,21 +234,21 @@ def allChanges(dir):
         print("No soundchange files found")
         return
     for i in range(numchanges):
+        # Gets soundchanges from file as a list
         soundchanges = [line.strip() for line in open(dir+"/inputs/changes"+str(i+1)+".txt")] # Sound change file
-        try:
+        # Gets all the words from the previous word file (starting at 0)
+        try: # Works if words#.txt exists
             words = [line.strip() for line in open(dir+"/outputs/words"+str(i)+".txt")] # existing words file
-        except IOError:
+        except IOError: # But if not, gives error statement and returns nothing
             print("No words0 file found")
             return
+        # Generates list of phonemes
+        # Used for rule creation (to limit number of rules made to save time by not running through every possible rule)
         phonemes = list(set(''.join(words))) # Sets up phonemes from existing words
         outfile = open(dir+"/outputs/words"+str(i+1)+".txt",'w') # output file
         for soundchange in soundchanges:
             newchange = generateRules(soundchange,phonemes,IPA_info)
             for change in newchange:
                 words = changeSound(words, change)
-        outfile.write('\n'.join(words)) # puts changed words into the output file for use in the next iteration
+        outfile.write('\n'.join(words)) # puts changed words into the output file for use in the next change iteration
         outfile.close()
-
-
-if __name__ == "__main__":
-    allChanges('L1')
