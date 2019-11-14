@@ -19,12 +19,12 @@ def readInIPA():
     IPACKEY = {line[0]:splitter(line[1]) for line in ipackeylines}
     IPAVKEY = {line[0]:splitter(line[1]) for line in ipavkeylines}
     # Sets up featuresets for future use
-    places = ["+BILA","+LABD","+DENT","+ALVE","+PALV","+RETR","+PALT","+VELA","+UVUL","+PHAR","+LARY"]
-    manners = ["+STOP","+FRIC","+LATF","+NASA","+APPR","+LATA","+TRIL","+FLAP"]
-    voicings = ["+VOID","+VLSS"]
-    heights = ["+CLOS","+NRCL","+MIDC","+MIDO","+NROP","+OPEN"]
-    backnesses = ["+FRNT","+CENT","+BACK"]
-    roundings = ["+URND","+ROND"]
+    places = ['+'+aspect for aspect in IPACKEY if len(IPACKEY[aspect][0]) == 1 and IPACKEY[aspect][1] == 0]
+    manners = ['+'+aspect for aspect in IPACKEY if len(IPACKEY[aspect][0]) == 1 and IPACKEY[aspect][1] == 1]
+    voicings = ['+'+aspect for aspect in IPACKEY if len(IPACKEY[aspect][0]) == 1 and IPACKEY[aspect][1] == 2]
+    heights = ['+'+aspect for aspect in IPAVKEY if len(IPAVKEY[aspect][0]) == 1 and IPAVKEY[aspect][1] == 0]
+    backnesses = ['+'+aspect for aspect in IPAVKEY if len(IPAVKEY[aspect][0]) == 1 and IPAVKEY[aspect][1] == 1]
+    roundings = ['+'+aspect for aspect in IPAVKEY if len(IPAVKEY[aspect][0]) == 1 and IPAVKEY[aspect][1] == 2]
     features = [places,manners,voicings,heights,backnesses,roundings]
     return [IPAC, IPAV, IPACKEY, IPAVKEY, features]
 
@@ -119,3 +119,12 @@ def filterPhonemes(phonemes, phonemeset):
         if phoneme in phonemeset:
             filtered.append(phoneme)
     return filtered
+
+
+if __name__ == "__main__":
+    IPA_info = readInIPA()
+    print(IPA_info[-1])
+
+    features = ["+RONA","+AFFR","+NASL"]
+    for feat in features:
+        print(','.join(findSet(feat,IPA_info[:-1])))
