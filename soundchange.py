@@ -168,6 +168,8 @@ def generateRules(rule,phonemes,IPA_info):
         maxindexes = [len(inphons)-1,len(outphons)-1,len(environments)-1]
         indexes = [0,0,0]
         max = False
+        if -1 in maxindexes:
+            max = True
         while not max:
             # Generates a rule and returns a value to define if the rule is valid
             validrule, valid = validRule(ioe,indexes,phonemes)

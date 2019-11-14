@@ -89,11 +89,11 @@ def findSet(features, IPASTUFF):
             ranges = addFeats(ranges,phonkey[feat[1:]])
     # fills in empty values to full table if left empty
     if ranges[0] == []:
-        ranges[0] = [i for i in phonemeset] # Fills in for axis 0
+        ranges[0] = [i for i in range(len(phonemeset))] # Fills in for axis 0
     if ranges[1] == []:
-        ranges[1] = [i for i in phonemeset[0]] # Fills in for axis 1
+        ranges[1] = [i for i in range(len(phonemeset[0]))] # Fills in for axis 1
     if ranges[2] == []:
-        ranges[2] = [i for i in phonemeset[0][0]] # Fills in for axis 2
+        ranges[2] = [i for i in range(len(phonemeset[0][0]))] # Fills in for axis 2
     for feat in feats:
         if feat[0] == '-':
             ranges = rmFeats(ranges,phonkey[feat[1:]])
