@@ -83,7 +83,6 @@ def findSet(features, IPASTUFF):
         phonemeset = IPAV
         phonkey = IPAVKEY
     # Adds features
-    #print(feats)
     for feat in feats:
         if feat[0] == '+':
             ranges = addFeats(ranges,phonkey[feat[1:]])
@@ -104,13 +103,6 @@ def findSet(features, IPASTUFF):
                 if phonemeset[i][j][k] != '0':
                     phonemes.append(phonemeset[i][j][k])
     return phonemes
-
-# Finds a specific phoneme given features
-def findPhoneme(features, IPASTUFF):
-    if len(features.split(',')) != 3:
-        print("Wrong number of features")
-        return
-    return findSet(features,IPASTUFF)[0]
 
 # Takes intersection of phonemes in inventory and phonemes in a given set
 def filterPhonemes(phonemes, phonemeset):

@@ -153,6 +153,25 @@ def validRule(ioe,indexes,phonemes):
 def generateRules(rule,phonemes,IPA_info):
     info_short = IPA_info[:4]
     rules = []
+    # Checks to make sure rules are both valid and noncontradicting
+    inphon, outphon, envi = parseRule(rule)
+    environ = [item for item in envi.split(' ') if item != '_']
+    ioe = [inphon,outphon]+environ
+    ignoreRule = False
+    for item in ioe:
+        isvalid = helpers.validPhonemeSet(item, IPA_info)
+        if isvalid == 2:
+            print("Rule", rule, "will be ignored.")
+            ignoreRule = True
+        elif isvalid == 1:
+            print("Warning: Phoneme set", item, "in rule", rule, "contains features from both consonants and vowels."
+                                                                    " This rule will be ignored.")
+            ignoreRule = True
+        elif helpers.checkConflict(item):
+            print("Warning: Phoneme set", item, "in rule", rule, "contains contradicting features. This rule will "
+                                                                    "be ignored.")
+    if ignoreRule:
+        return rules
     # Generates all rules with ASPECT:a replaced
     alpharules = replaceAlpha(rule,IPA_info)
     # Iterates through all generated rules

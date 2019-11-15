@@ -28,21 +28,18 @@ if __name__ == "__main__":
         swc = arguments[0]
         direct = arguments[1]
     else:
-        print("Not enough arguments. Please enter at least syllable/word/change (swc) mode and language directory.")
+        print("Error: Not enough arguments. Please enter at least syllable/word/change (swc) mode and language directory.")
         sys.exit()
     if direct in os.listdir("."):
-        if len(os.listdir(direct)) == 0:
-            print(direct,"is empty. Aborting.")
+        if 'inputs' not in os.listdir(direct):
+            print("Error:",direct,"does not have an inputs directory.")
+            abort = True
+        if 'outputs' not in os.listdir(direct):
+            print("Error:",direct,"does not have an outputs directory.")
             abort = True
     else:
-        print(direct,"does not exist. Aborting.")
+        print("Error:",direct,"does not exist.")
         sys.exit()
-    if 'inputs' not in os.listdir(direct):
-        print(direct,"does not have an inputs directory. Aborting.")
-        abort = True
-    if 'outputs' not in os.listdir(direct):
-        print(direct,"does not have an outputs directory. Aborting.")
-        abort = True
     if not abort:
         syls = 3
         if len(arguments) > 2:
