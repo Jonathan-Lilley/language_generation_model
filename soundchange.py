@@ -172,10 +172,15 @@ def generateRules(rule,phonemes,IPA_info):
                                                                     "be ignored.")
     if ignoreRule:
         return rules
-    # Generates all rules with ASPECT:a replaced
+    # Generates all rules with {X}:a replaced
     alpharules = replaceAlpha(rule,IPA_info)
     # Iterates through all generated rules
     for alpharule in alpharules:
+        ignoreRule = False
+        # Checks that the alpha generator didn't generate a rule with self-contradicting feature sets
+        # Ignores the rule but doesn't alert the user if it did
+        if helpers.checkConflict(alpharule):
+            ignoreRule = True
         # Splits input, output, and environment
         inphonset, outphonset, environment = parseRule(alpharule)
         # Generates full set of input phonemes, output phonemes, and environments
@@ -192,7 +197,7 @@ def generateRules(rule,phonemes,IPA_info):
         while not max:
             # Generates a rule and returns a value to define if the rule is valid
             validrule, valid = validRule(ioe,indexes,phonemes)
-            if valid: # If the rule is valid...
+            if valid and not ignoreRule: # If the rule is valid...
                 rules.append(validrule) # Add the rule
             # Move on to next potential rule
             indexes, max = helpers.increment(indexes,maxindexes)
@@ -243,7 +248,7 @@ def changeSound(words, rule):
 # Implements all sound changes
 def allChanges(dir):
     filelist = os.listdir(dir+'/inputs')
-    IPA_info = IPA.readInIPA()
+    IPA_info = IPA.readInIPA(dir)
     # Counts up number of "change" files in input directory, aka how many stages of sound change
     numchanges = 0
     for file in filelist:

@@ -7,6 +7,7 @@ import soundchange
 import sys
 import os
 
+# Special error message for nonexistent directories
 class DirNotFound(Exception):
     pass
 

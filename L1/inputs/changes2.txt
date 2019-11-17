@@ -1,7 +1,0 @@
-s>z/_
-c>ç/_ ɲ
-n>m/p _
-+STOP,VOICING:a>+STOP,PLACE:a,VOICING:a/_ +STOP,VOICING:a,PLACE:a
-r>l/r _
-q>0/_ ʀ
-+FRIC,PLACE:a,VOICING:a>0/_ +FRIC,PLACE:a,VOICING:a

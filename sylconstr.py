@@ -6,19 +6,22 @@ import helpers
 import sys
 
 # Reads in phonemes file and rules file
-def readInRules(phonemefile, rulesfile):
-    IPA_info = IPA.readInIPA()[:4]
+def readInRules(phonemefile, rulesfile, dir):
+    IPA_info = IPA.readInIPA(dir)[:4]
     abort = False
+    # Makes sure phonemes file is exists
     try:
         phonemes = (' '.join([line.strip() for line in open(phonemefile) if line.strip() != ''])).split(' ')
     except IOError:
         print("Phonemes file not found")
         abort = True
+    # Makes sure rules file exists
     try:
         sylrules = [line.strip().split('|') for line in open(rulesfile) if line.strip() != '']
     except IOError:
         print("Syllable rule file not found")
         abort = True
+    # Exits if either does not exist
     if abort == True:
         sys.exit()
     return phonemes, sylrules, IPA_info
@@ -36,9 +39,11 @@ def generateRules(rule,IPA_info):
     while not max:
         ignoreRule = False
         newrule = ''
+        # Add onset + space if nonempty onset
         if len(onsets[indexes[0]]) > 0:
             newrule += onsets[indexes[0]]+' '
-        newrule += nucleus[indexes[1]]
+        newrule += nucleus[indexes[1]] # Add nucleus
+        # Add space + coda if nonempty coda
         if len(codas[indexes[2]]) > 0:
             newrule += ' '+codas[indexes[2]]
         # Checks if rules are both valid and noncontradicting
@@ -73,7 +78,7 @@ def sylsFromRule(phonemes,rule,IPA_info):
     for sylele in rule:
         allphons = IPA.findSet(sylele,IPA_info)
         phonset = IPA.filterPhonemes(phonemes,allphons)
-        # Gives error message if no phonemes found for rule element
+        # Gives error message if no phonemes found for rule element. Not sure if this is needed anymore though
         if len(phonset) == 0:
             print("Error: No phonemes in set",sylele+".")
             return ["EMPTY"]
@@ -82,8 +87,7 @@ def sylsFromRule(phonemes,rule,IPA_info):
     for sylele in phonsets:
         indexes.append(0)
         maxindexes.append(len(sylele)-1)
-    # Iterates through all possible combinations of syllables based on phoneme sets and order, using indexes array to
-    #       keep track of position within the phoneme sets
+    # Generates all possible syllables; see increment() in helpers.py for explanation on how this loop works
     while not max:
         syl = ''
         for l in range(len(phonsets)):
@@ -94,10 +98,12 @@ def sylsFromRule(phonemes,rule,IPA_info):
 
 # Constructs all syllables given input phonemes and rule file and writes to output file
 def constructSyls(dir):
+    # Sets up file name variables
     outfile = dir + "/outputs/syllables.txt"
     phonemefile = dir + "/inputs/phonemes.txt"
     rulesfile = dir + "/inputs/sylstructs.txt"
-    phonemes, sylrules, IPA_info = readInRules(phonemefile,rulesfile)
+    phonemes, sylrules, IPA_info = readInRules(phonemefile,rulesfile,dir)
+    # Makes sure there's a phonemeset and there are syllable rules; exits if not
     abort = False
     if phonemes == ['']:
         print("No phoneme set.")
@@ -107,17 +113,22 @@ def constructSyls(dir):
         abort = True
     if abort:
         sys.exit()
+    # Set is used for syllables to increase speed; it ignores duplicates and is converted to a list later
     sylset = set()
     newrules = []
+    # Generates all possible rules for each line of rules in the sylstructs file
     for rule in sylrules:
         newrules += generateRules(rule,IPA_info)
+    # goes through each possible rule and generates all the possible syllables
     for rule in newrules:
         sylstoadd = sylsFromRule(phonemes,rule,IPA_info)
         for syl in sylstoadd:
             sylset.add(syl)
         if "EMPTY" in sylset:
             sylset = []
+            break
     sylset = list(sylset)
+    # output file
     out = open(outfile,'w')
     out.write('\n'.join(sylset))
     out.close()
