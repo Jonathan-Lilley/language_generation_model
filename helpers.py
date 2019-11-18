@@ -54,9 +54,9 @@ def validPhonemeSet(features,IPA_info):
     # Checks which chart the first feature is in
     if len(feats[0]) <= 2:
         return valid
-    if feats[0][1:] in IPACKEY:
+    if feats[0][1:] in IPACKEY or feats[0] in ["PLACE:a","MANNER:a","VOICING:a"]:
         featset = 'c'
-    elif feats[0][1:] in IPAVKEY:
+    elif feats[0][1:] in IPAVKEY or feats[0] in ["HEIGHT:a","BACKNESS:a","ROUNDING:a"]:
         featset = 'v'
     else: # If something goes wrong and it's not in either, follow special actions
         print("Warning: Descriptor",feats[0][1:],"not in IPACKEY or IPAVKEY.")
