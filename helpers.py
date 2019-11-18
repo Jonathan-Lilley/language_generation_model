@@ -59,13 +59,14 @@ def validPhonemeSet(features,IPA_info):
     elif feats[0][1:] in IPAVKEY or feats[0] in ["HEIGHT:a","BACKNESS:a","ROUNDING:a"]:
         featset = 'v'
     else: # If something goes wrong and it's not in either, follow special actions
-        print("Warning: Descriptor",feats[0][1:],"not in IPACKEY or IPAVKEY.")
+        print("Warning: Descriptor "+feats[0][1:]+" not in IPACKEY or IPAVKEY.")
         featset = 'x'
         valid = 2
     # Go through the rest of the features and check which chart they're in
-    for feat in feats[1:]:
-        if feat[1:] not in IPAVKEY and feat[1:] not in IPACKEY:
-            print("Warning: Descriptor",feats[0][1:],"not in IPACKEY or IPAVKEY.")
+    for feat in feats:
+        if feat[1:] not in IPAVKEY and feat[1:] not in IPACKEY and feat not in ["PLACE:a","MANNER:a","VOICING:a",
+                                                                                "HEIGHT:a","BACKNESS:a","ROUNDING:a"]:
+            print("Warning: Descriptor "+feat+" not in IPACKEY or IPAVKEY.")
             featset = 'x'
             valid = 2
         elif featset == 'c' and feat[1:] in IPAVKEY:

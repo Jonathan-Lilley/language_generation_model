@@ -161,14 +161,14 @@ def generateRules(rule,phonemes,IPA_info):
     for item in ioe:
         isvalid = helpers.validPhonemeSet(item, IPA_info)
         if isvalid == 2:
-            print("Rule", rule, "will be ignored.")
+            print("Rule "+rule+" will be ignored.")
             ignoreRule = True
         elif isvalid == 1:
-            print("Warning: Phoneme set", item, "in rule", rule, "contains features from both consonants and vowels."
+            print("Warning: Phoneme set "+item+" in rule "+rule+" contains features from both consonants and vowels."
                                                                     " This rule will be ignored.")
             ignoreRule = True
         elif helpers.checkConflict(item):
-            print("Warning: Phoneme set", item, "in rule", rule, "contains contradicting features. This rule will "
+            print("Warning: Phoneme set "+item+" in rule "+rule+" contains contradicting features. This rule will "
                                                                     "be ignored.")
     if ignoreRule:
         return rules

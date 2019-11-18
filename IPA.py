@@ -118,3 +118,7 @@ def filterPhonemes(phonemes, phonemeset):
         if phoneme in phonemeset:
             filtered.append(phoneme)
     return filtered
+
+if __name__ == "__main__":
+    IPASTUFF = readInIPA("L4")
+    print(IPASTUFF[3])
