@@ -1,6 +1,45 @@
 '''                 WORD CONSTRUCTOR                    '''
 
-import random
+import random, time
+
+# use this in the program later
+# its GOOD
+def primeGen(primes):
+    n = 3
+    while True:
+        isprime = True
+        n += 1
+        for p in primes:
+            if n % p == 0:
+                isprime = False
+        if isprime == True:
+            primes.append(n)
+            yield n
+
+def lowestPrime(num,primes,pgen):
+    if primes:
+        for p in primes:
+            if num % p != 0:
+                return p
+    highest = primes[-1]
+    while highest < num:
+        highest = next(pgen)
+        if num % highest != 0:
+            return highest
+    return num
+
+primes = [2]
+pgen = primeGen(primes)
+lowestPrime(42,primes,pgen)
+
+def runtime(primes,pgen):
+    t = time.time()
+    for i in range(1000000000):
+        print(lowestPrime(i,primes,pgen))
+    print(time.time() - t)
+
+###
+###
 
 # Generates a given number of words given syllables and number of syllables per word
 def genWords(syls, sylnum, numwords):

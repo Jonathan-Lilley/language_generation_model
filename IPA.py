@@ -11,6 +11,7 @@ def splitter(rangeaxis):
 # Reads in all the IPA files to create two sets of IPA matrices and two sets of IPA data lookups (consonants and vowels)
 def readInIPA(dir):
     # Reads in IPAs
+    # format: [[(string, string)],[(string, string)]]
     IPAC = [[pair.split(',') for pair in line.strip().split(' ')] for line in open(dir+"/IPA/IPAC.txt")]
     IPAV = [[pair.split(',') for pair in line.strip().split(' ')] for line in open(dir+"/IPA/IPAV.txt")]
     # Reads in IPA keys and sets up dictionaries
