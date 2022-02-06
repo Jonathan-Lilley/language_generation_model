@@ -23,7 +23,6 @@ class SylConst:
         self.syls = set()
 
     def generateRules(self,rule):
-
         onsets = rule[0].split(';')
         nucleus = rule[1].split(';')
         codas = rule[2].split(';')
@@ -50,7 +49,6 @@ class SylConst:
 
 
     def sylsFromRule(self,rule):
-
         phonsets = []
         rule = rule.split(' ')
         for sylele in rule:
