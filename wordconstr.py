@@ -12,9 +12,9 @@ def getPrimes(max):
 
 
 class WordGen:
-    def __init__(self,direct,wordcount,sylratios):
+    def __init__(self,direct,wordcount,sylratios,syls):
         self.direct = direct
-        self.syllables = [line.strip() for line in open(self.direct + "/outputs/syllables.txt")]
+        self.syllables = syls
         self.sylNum = len(self.syllables)
         self.wordCount = wordcount
         self.sylRatios = self.getRatios(sylratios.split(':'))
@@ -22,6 +22,9 @@ class WordGen:
         self.primes = getPrimes(self.sylNum)[-self.sylCount:]
         self.words = []
         self.start = 0
+
+    def getWords(self):
+        return self.words
 
     def getRatios(self,sylratios):
         ratios = [int((self.wordCount * (int(rat))/100)//1) for rat in sylratios]
@@ -53,6 +56,8 @@ class WordGen:
             print(f"Elapsed time = {round((time.time()-self.start),2)} ... Generating word {currWords[s]}",end="\r")
 
     def genWords(self):
+        syldistrib = {i+1:self.sylRatios[i] for i in range(len(self.sylRatios))}
+        print(f"Generating {self.wordCount} words. Syllable distribution: {syldistrib}")
         indices = self.primes
         for ratios in range(self.sylCount):
             random.shuffle(self.syllables)
@@ -64,5 +69,6 @@ class WordGen:
     def writeWords(self):
         self.start = time.time()
         self.genWords()
+        print()
         with open(self.direct+"/outputs/words0.txt",'w') as outfile:
             outfile.write('\n'.join(self.words))

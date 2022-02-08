@@ -1,11 +1,11 @@
 '''     SYLLABLE CONSTRUCTOR       '''
 import sys, os
-from IPA import IPA, Valid
+from IPA import Valid
 
 class SylConst:
-    def __init__(self,direct):
+    def __init__(self,direct,IPAf):
         self.direct = direct
-        self.IPAf = IPA(direct)
+        self.IPAf = IPAf
 
         try:
             self.phonemes = (' '.join([line.strip() for line in open(direct + "/inputs/phonemes.txt")
@@ -22,6 +22,8 @@ class SylConst:
         self.rules = list()
         self.syls = []
 
+    def getSyls(self):
+        return self.syls
 
     def checkValid(self,rulepart):
         subparts = rulepart.split()
@@ -46,8 +48,10 @@ class SylConst:
 
         for part in range(len(allparts)):
             for r in range(len(allparts[part])):
+                #print(allparts[part],len(allparts[part]),r)
                 if self.checkValid(allparts[part][r]) != Valid.VAL:
                     allparts[part].remove(allparts[part][r])
+                    r -= 1
 
         rules = [[[' '.join([ons,nuc,cod]) for ons in allparts[0]] for nuc in allparts[1]] for cod in allparts[2]]
         self.rules = [Lthree for Lone in rules for Ltwo in Lone for Lthree in Ltwo]
@@ -97,7 +101,3 @@ class SylConst:
         with open(self.direct + "/outputs/syllables.txt",'w') as out:
             out.write('\n'.join(self.syls))
             out.close()
-
-if __name__ == "__main__":
-    constructor = SylConst("L5")
-    constructor.writeSyls()

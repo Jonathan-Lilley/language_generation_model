@@ -1,0 +1,5 @@
+0>i/f _ k
+p>b/_ +VOWL
+l>0/_
++CONS>0/_ #
++STOP>+STOP,VOICING:a,PLACE:a/# _

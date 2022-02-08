@@ -12,6 +12,19 @@ class IPA:
     def __init__(self,direct):
         self.IPAC = SubIPA(direct,"C")
         self.IPAV = SubIPA(direct,"V")
+        self.alphas, self.allphons, self.allkeys = self.getData()
+
+    def getData(self):
+        alphas = {**self.IPAC.getAFeatures(), **self.IPAV.getAFeatures()}
+        allphons = self.IPAC.getPhons() + self.IPAV.getPhons()
+        allkeys = {**self.IPAC.getKey(), **self.IPAV.getKey()}
+        return alphas, allphons, allkeys
+
+    def getAlpha(self):
+        return self.alphas
+
+    def getPhons(self):
+        return self.allphons
 
     def findSet(self,features):
         feats = [feat.strip().upper() for feat in features.split(',')]
@@ -46,17 +59,15 @@ class IPA:
         if len(feats[0]) <= 2:
             return valid
 
-        alphas = ["PLACE:a", "MANNER:a", "VOICING:a", "HEIGHT:a", "BACKNESS:a", "ROUNDING:a"]
         combkeys = {**self.IPAC.key, **self.IPAV.key}
 
-
-        if feats[0][1:] not in combkeys and feats[0][1:] not in alphas:
+        if feats[0][1:] not in combkeys and feats[0][1:] not in self.alphas:
             print("Warning: Descriptor " + feats[0][1:] + " not in IPACKEY or IPAVKEY.")
             return Valid.INVFEAT
-        featset = (self.IPAC.key,self.IPAV.key)[(feats[0][1:] in self.IPAV.key or feats[0] in alphas[3:])]
+        featset = (self.IPAC.getKey(),self.IPAV.getKey())[(feats[0][1:] in self.IPAV.key or feats[0] in self.IPAV.getAFeatures())]
 
         for feat in feats:
-            if feat[1:] not in combkeys and feat not in alphas:
+            if feat[1:] not in combkeys and feat not in self.alphas:
                 print("Warning: Descriptor ",feat," not in IPACKEY or IPAVKEY.")
                 return Valid.INVFEAT
             elif feat[1:] not in featset:
@@ -77,9 +88,3 @@ class IPA:
                 return True
             featset.add(feat)
         return False
-
-
-if __name__ == "__main__":
-    # tests
-    full = IPA("L3")
-    print(full.findSet("p"))

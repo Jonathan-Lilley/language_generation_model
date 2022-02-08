@@ -17,7 +17,16 @@ class SubIPA:
                           and self.key[aspect][1] == num] for num in range(3)
                          for K in (["HEIGHT","BACKNESS","ROUNDING"],["PLACE","MANNER","VOICING"])[consvowel == "C"]}
 
-        # Splits an input into a range set of values (list) and an axis value (int), then returns them
+    def getAFeatures(self):
+        return self.features
+
+    def getPhons(self):
+        return self.phons
+
+    def getKey(self):
+        return self.key
+
+    # Splits an input into a range set of values (list) and an axis value (int), then returns them
     def splitter(self,rangeaxis):
         r, axis = rangeaxis.split(';')
         r = r.split(',')

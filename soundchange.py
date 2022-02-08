@@ -1,248 +1,127 @@
 '''                 SOUND CHANGE                    '''
 
-import IPA
-import helpers
-import os
+import os, re
+from IPA import IPA, Valid
 
-# Checks to see if two parts of a string are identical
-# Part of findSubstring
-# Input i is initial index
-def checkIdent(string, substring, i):
-    j = 0
-    while j < len(substring) and i + j < len(string):
-        if string[i + j] == substring[j]:
-            j += 1
-            if j == len(substring):
-                return True
-        else:
-            return False
 
-# Finds index of a substring within a string
-def findSubstring(string, substring):
-    i = 0
-    while i < len(string):
-        if string[i] == substring[0]:
-            ident = checkIdent(string, substring, i)
-            if ident:
-                return i
-        i += 1
-    return -1
+class SoundChanger:
+    def __init__(self,direct,IPAf,inpwords):
+        self.direct = direct
+        self.IPAf = IPAf
+        self.inpwords = inpwords
+        self.rules = []
+        self.words = []
 
-# Replaces all instances of substring with replstr (replacement string) in string
-def replaceSubstring(string, substring, replstr):
-    i = findSubstring(string, substring)
-    while i != -1:
-        string = string[:i] + replstr + string[i+len(substring):]
-        i = findSubstring(string,substring)
-    return string
+    def parseRule(self,rule):
+        rule = rule.split('>')
+        inphon = rule[0]
+        outphon, environment = rule[1].split('/')
+        return inphon, outphon, environment
 
-# Replaces alpha features
-def replaceAlpha(rule,IPA_info):
-    pmvhbr = IPA_info[4] # places, manners, voicings, heights, backnesses, roudnings
-    # Sets up arrays and bool max
-    present = []
-    rules = []
-    replacements = []
-    indexes = []
-    maxindexes = []
-    max = False
-    # Checks if there is an alpha value in the rule
-    if findSubstring(rule, "a") == -1: # If not, add the rule as is
-        rules.append(rule)
-    # If so, generate all alpha replacement rules
-    # replacements is an array of arrays where the subarrays are the place/manner/voicing/etc value arrays
-    # present indicates if a particular alpha value is present
-    else:
-        if findSubstring(rule, "PLACE:a") != -1:
-            replacements.append(pmvhbr[0])
-            present.append("PLACE:a")
-        if findSubstring(rule, "MANNER:a") != -1:
-            replacements.append(pmvhbr[1])
-            present.append("MANNER:a")
-        if findSubstring(rule, "VOICING:a") != -1:
-            replacements.append(pmvhbr[2])
-            present.append("VOICING:a")
-        if findSubstring(rule, "HEIGHT:a") != -1:
-            replacements.append(pmvhbr[3])
-            present.append("HEIGHT:a")
-        if findSubstring(rule, "BACKNESS:a") != -1:
-            replacements.append(pmvhbr[4])
-            present.append("BACKNESS:a")
-        if findSubstring(rule, "ROUNDING:a") != -1:
-            replacements.append(pmvhbr[5])
-            present.append("ROUNDING:a")
-        # Sets up indexes and max index values
-        for aspect in replacements:
-            indexes.append(0)
-            maxindexes.append(len(aspect)-1)
-        # Goes through and replaces all alpha instances in all combinations
-        while not max:
-            # initializes newrule as rule so newrule can have its alpha features replaced
-            newrule = rule
-            # Replaces all alpha values present with current iteration's values
-            for aspect in range(len(replacements)):
-                newrule = replaceSubstring(newrule,present[aspect],replacements[aspect][indexes[aspect]])
-            rules.append(newrule)
-            indexes, max = helpers.increment(indexes,maxindexes) # Next iteration
-    return rules
+    def generateEnvirons(self,environment):
+        phonsets = [self.IPAf.findSet(environ) for environ in environment.split()]
+        environments = phonsets[0]
+        for pset in phonsets[1:]:
+            tempenv = []
+            for e in environments:
+                for p in pset:
+                    tempenv = e+p
+            environments = tempenv
+        return environments
 
-# Expands environment rules to generate all possible environment rules
-def generateEnvirons(environment,IPA_info):
-    IPA_info = IPA_info[:4]
-    eles = environment.split(' ')
-    environments = []
-    phonsets = []
-    indexes = []
-    maxindexes = []
-    max = False
-    # Creates a phoneme set for each element of the environment
-    for ele in eles:
-        phonsets.append(IPA.findSet(ele,IPA_info))
-    # Creates index arrays to keep track of phoneme set indexes
-    for phonset in phonsets:
-        indexes.append(0)
-        maxindexes.append(len(phonset) - 1)
-    # Iterates through all possible combinations of syllables based on phoneme sets and order, using indexes array to
-    #       keep track of position within the phoneme sets
-    if -1 in maxindexes: # Returns empty array if any phonemeset is empty
-        return []
-    while not max: # Otherwise, generates all environments
-        environ = ''
-        for l in range(len(phonsets)):
-            environ += phonsets[l][indexes[l]]
-        environments.append(environ)
-        indexes, max = helpers.increment(indexes, maxindexes) # Moves to next iteration
-    return environments
+    def subAlpha(self,rules,alpha):
+        replace = []
+        while alpha in rules[0]:
+            for r in range(len(rules)):
+                for a in self.IPAf.geAlphas[alpha]:
+                    replace.append(re.sub(alpha,a,rules[r],1))
+            rules = replace
+            replace = []
 
-# Parses a rule into the input phoneme, the output phoneme, and the environment
-def parseRule(rule):
-    rule = rule.split('>')
-    inphon = rule[0]
-    outphon, environment = rule[1].split('/')
-    return inphon, outphon, environment
-
-# Generates valid rules and ignores invalid rules
-# Rules are slightly filtered for accuracy and efficiency
-def validRule(ioe,indexes,phonemes):
-    inphons, outphons, environments = ioe
-    # Sets up validity variables
-    validenviron = True
-    validinphon = True
-    validoutphon = True
-    # Gets phonemes and environments
-    inphon = inphons[indexes[0]]
-    outphon = outphons[indexes[1]]
-    environ = environments[indexes[2]]
-    # Checks if inphon is in phonemes or is 0; cuts down on rules
-    if inphon not in phonemes + ['0']:
-        validinphon = False
-    # Checks if outphon is inphon -- aka identity; ignores rule if it is, cuts down on rules
-    if outphon == inphon:
-        validoutphon = False
-    # Checks each phoneme in environ
-    for phon in environ:
-        # If it's not in phonemes or if it isnt # or _, ignores rule; cuts down on rules
-        if phon not in phonemes and phon not in '#_':
-            validenviron = False
-    rule = inphon + '>' + outphon + '/' + environ
-    if validinphon and validoutphon and validenviron:
-        return rule, True
-    return rule, False
-
-# Generates all phoneme rules based on feature rules
-def generateRules(rule,phonemes,IPA_info):
-    info_short = IPA_info[:4]
-    rules = []
-    # Checks to make sure rules are both valid and noncontradicting
-    inphon, outphon, envi = parseRule(rule)
-    environ = [item for item in envi.split(' ') if item != '_']
-    ioe = [inphon,outphon]+environ
-    ignoreRule = False
-    for item in ioe:
-        isvalid = helpers.validPhonemeSet(item, IPA_info)
-        if isvalid == 2:
-            print("Rule "+rule+" will be ignored.")
-            ignoreRule = True
-        elif isvalid == 1:
-            print("Warning: Phoneme set "+item+" in rule "+rule+" contains features from both consonants and vowels."
-                                                                    " This rule will be ignored.")
-            ignoreRule = True
-        elif helpers.checkConflict(item):
-            print("Warning: Phoneme set "+item+" in rule "+rule+" contains contradicting features. This rule will "
-                                                                    "be ignored.")
-    if ignoreRule:
+    def replaceAlpha(self,rule):
+        rules = [rule]
+        for alpha in self.IPAf.geAlphas:
+            self.subAlpha(rules,alpha)
         return rules
-    # Generates all rules with {X}:a replaced
-    alpharules = replaceAlpha(rule,IPA_info)
-    # Iterates through all generated rules
-    for alpharule in alpharules:
-        ignoreRule = False
-        # Checks that the alpha generator didn't generate a rule with self-contradicting feature sets
-        # Ignores the rule but doesn't alert the user if it did
-        if helpers.checkConflict(alpharule):
-            ignoreRule = True
-        # Splits input, output, and environment
-        inphonset, outphonset, environment = parseRule(alpharule)
-        # Generates full set of input phonemes, output phonemes, and environments
-        inphons = IPA.findSet(inphonset,info_short)
-        outphons = IPA.findSet(outphonset,info_short)
-        environments = generateEnvirons(environment,IPA_info)
-        # Iterates through all parts of the rule
-        ioe = [inphons, outphons, environments]
-        maxindexes = [len(inphons)-1,len(outphons)-1,len(environments)-1]
-        indexes = [0,0,0]
-        max = False
-        if -1 in maxindexes:
-            max = True
-        while not max:
-            # Generates a rule and returns a value to define if the rule is valid
-            validrule, valid = validRule(ioe,indexes,phonemes)
-            if valid and not ignoreRule: # If the rule is valid...
-                rules.append(validrule) # Add the rule
-            # Move on to next potential rule
-            indexes, max = helpers.increment(indexes,maxindexes)
-    return rules
+
+    def generateAlpha(self,rule):
 
 
-# Changes the sounds in a single word
-def changeWord(word, rule):
-    # Adds end of word symbol
-    word += '#'
-    # Sets up input phoneme, output phoneme, and environment
-    inphon, outphon, environ = parseRule(rule)
-    # If epenthesis, insert 0 between every character in word and environment to search for epenthesis context
-    if inphon == '0':
-        newword = '0'
-        for letter in word:
-            newword += letter+'0'
-        word = newword
-        newenviron = '0'
-        for l in range(len(environ)-1):
-            if environ[l] != '_' and environ[l+1] != '_':
-                newenviron += environ[l]+'0'
-            else:
-                newenviron += environ[l]
-        newenviron += environ[-1]+'0'
-        environ = newenviron
-    # Creates a substring that is the environment to find in and a replacement substring
-    findenviron = replaceSubstring(environ,'_',inphon)
-    replacement = replaceSubstring(environ,'_',outphon)
-    # Replaces environment with replacement environment
-    while findSubstring(word,findenviron) != -1:
-        word = replaceSubstring(word,findenviron,replacement)
-    # Removes 0 and # (deletion and end of word symbols)
-    while findSubstring(word,'0') != -1:
-        word = replaceSubstring(word,'0','')
-    while findSubstring(word,'#') != -1:
-        word = replaceSubstring(word,'#','')
-    return word
+    def checkValid(self,rule,item):
+        validity = self.IPAf.validPhonemeSet(item)
+        conflict = IPA.checkConflict(item)
+        if validity == Valid.INVFEAT:
+            print(f"Warning: {rule} contains invalid feature {item}. This rule will be ignored.")
+        elif validity == Valid.INVSET:
+            print(f"Warning: Phoneme set {item} in rule {rule} contains features from both consonants and vowels."
+                  " This rule will be ignored.")
+        elif conflict:
+            print(f"Warning: Phoneme set {item} in rule {rule} contains contradicting features. This rule will "
+                  "be ignored.")
+        if conflict or validity != Valid.VAL:
+            return False
+        return True
 
-# Changes all the words with a given sound
-def changeSound(words, rule):
-    newWords = []
-    for word in words:
-        newWords.append(changeWord(word,rule))
-    return newWords
+    def checkValidParts(self,rule):
+        iphon, ophon, contx = self.parseRule(rule)
+        contx = [c for c in contx.split() if c != '_']
+        for item in [iphon,ophon]:
+            if not self.checkValid(rule,item):
+                return False
+            if item not in self.IPAf.getPhons() + ['0']:
+                print(f"Warning: rule {rule} contains an invalid phoneme {item}. This rule will be ignored")
+                return False
+        if iphon == ophon:
+            print(f"Warning: rule {rule} contains equivalent input and output. This rule will be ignored.")
+            return False
+        for item in contx:
+            if not self.checkValid(rule,item):
+                return False
+            if item not in self.IPAf.getPhons() + ['','_','#']:
+                print(f"Warning: rule {rule} contains an invalid phoneme {item}. This rule will be ignored")
+                return False
+        return True
+
+    def generateRules(self,inrule):
+        arules = self.replaceAlpha(inrule)
+        rules = []
+        for rule in arules:
+            if not self.checkValidParts(rule):
+                continue
+            iphonset, ophonset, contx = self.parseRule(rule)
+            iphons, ophons = self.IPAf.findSet(iphonset), self.IPAf.findSet(ophonset)
+            contexts = self.generateEnvirons(contx)
+            rules = iphons
+            for addit in [ophons,contexts]:
+                temprules = []
+                for rule in rules:
+                    for item in addit:
+                        temprules.append(rule+item)
+                rules = temprules
+        self.rules = [r[0]+'>'+r[1]+'/'+r[2] for r in rules]
+
+    def changeWord(self,word):
+        for rule in self.rules:
+            iphon, ophon, contx = self.parseRule(rule)
+            # epenthesis
+            if iphon == '0':
+                word = '0'+'0'.join(list(word))+'0'
+                idx = contx.index('_')
+                lcontx = list(contx)
+                contx = '0'+'0'.join(lcontx[:idx])+'_'+'0'.join(lcontx[idx+1:])+'0'
+            tosub = re.sub('_',iphon,contx)
+            subwith = re.sub('_',ophon,contx)
+            re.sub(tosub,subwith,word)
+            re.sub('0','',word)
+            re.sub('#','',word)
+        self.words.append(word)
+
+    def changeSound(self):
+        for word in self.inpwords:
+            self.changeWord(word)
+
+    def genChanges(self):
+        pass
 
 
 # Implements all sound changes

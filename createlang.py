@@ -4,10 +4,11 @@
 import sys, os
 from sylconstr import SylConst
 from wordconstr import WordGen
+from IPA import IPA
 
 def checkSWCDirect(args):
     if len(args) > 1:
-        swc = args[0]
+        swc = args[0].lower()
         direct = args[1]
     else:
         print(
@@ -48,10 +49,20 @@ if __name__ == "__main__":
     args = sys.argv[1:]
     swc, direct, wordcount, ratios = checkArgs(args)
 
-    sylConstructor = SylConst(direct)
-    sylConstructor.writeSyls()
+    IPAf = IPA(direct)
 
-    wordGenerator = WordGen(direct,wordcount,ratios)
-    wordGenerator.writeWords()
+    syls = []
+    words = []
+    changes = []
+
+    if "s" in swc:
+        sylConstructor = SylConst(direct,IPAf)
+        sylConstructor.writeSyls()
+        syls = sylConstructor.getSyls()
+
+    if "w" in swc:
+        wordGenerator = WordGen(direct,wordcount,ratios,syls)
+        wordGenerator.writeWords()
+        words = wordGenerator.getWords()
 
 
