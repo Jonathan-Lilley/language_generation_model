@@ -1,98 +1,68 @@
 '''                 WORD CONSTRUCTOR                    '''
-
 import random, time
 
-# use this in the program later
-# its GOOD
-def primeGen(primes):
-    n = 3
-    while True:
-        isprime = True
-        n += 1
-        for p in primes:
-            if n % p == 0:
-                isprime = False
-        if isprime == True:
-            primes.append(n)
-            yield n
 
-def lowestPrime(num,primes,pgen):
-    if primes:
-        for p in primes:
-            if num % p != 0:
-                return p
-    highest = primes[-1]
-    while highest < num:
-        highest = next(pgen)
-        if num % highest != 0:
-            return highest
-    return num
+# Note: this also excludes anything the max number is divisible by to make sure it doesn't loop over any number twice
+def getPrimes(max):
+    primes = [2]
+    for i in range(3,max):
+        if max % i != 0 and not [j for j in primes if i % j == 0]:
+            primes.append(i)
+    return primes
 
-primes = [2]
-pgen = primeGen(primes)
-lowestPrime(42,primes,pgen)
 
-def runtime(primes,pgen):
-    t = time.time()
-    for i in range(1000000000):
-        print(lowestPrime(i,primes,pgen))
-    print(time.time() - t)
+class WordGen:
+    def __init__(self,direct,wordcount,sylratios):
+        self.direct = direct
+        self.syllables = [line.strip() for line in open(self.direct + "/outputs/syllables.txt")]
+        self.sylNum = len(self.syllables)
+        self.wordCount = wordcount
+        self.sylRatios = self.getRatios(sylratios.split(':'))
+        self.sylCount = len(self.sylRatios)
+        self.primes = getPrimes(self.sylNum)[-self.sylCount:]
+        self.words = []
+        self.start = 0
 
-###
-###
+    def getRatios(self,sylratios):
+        ratios = [int((self.wordCount * (int(rat))/100)//1) for rat in sylratios]
+        if sum(ratios) > self.wordCount:
+            print("Warning: ratios do not add up to word count. Reducing highest ratio")
+            ratios[-1] = self.wordCount - sum(ratios[:-1])
+        elif sum(ratios) < self.wordCount:
+            print("Warning: ratios do not add up to word count. Increasing highest ratio")
+            ratios[-1] += self.wordCount - sum(ratios)
+        for ratio in range(len(ratios)):
+            if ratios[ratio] > self.sylNum**(ratio+1):
+                if ratio < len(ratios):
+                    ratios[ratio+1] += ratios[ratio] - self.sylNum**(ratio+1)
+                    print(f"Warning: words requested with syllable length {ratio+1} requires more syllables than "
+                          f"possible. Limiting these syllable words and increasing the next highest syllable words.")
+                else:
+                    print("Warning: more words requested than syllables possible")
+                ratios[ratio] = self.sylNum**(ratio+1)
+        return ratios
 
-# Generates a given number of words given syllables and number of syllables per word
-def genWords(syls, sylnum, numwords):
-    # Sets up a set for the words (set for faster lookup)
-    words = set()
-    # Sets up a maximum number of words possible, based on possible combination count of syllables
-    max = len(syls)**sylnum
-    for i in range(numwords):
-        # Breaks if all possible words have been generated
-        if i == max:
-            break
-        # Create word and keep recreating as long as the word does not exist in the set
-        word = ''.join([random.choice(syls) for syl in range(sylnum)])
-        while word in words:
-            word = ''.join([random.choice(syls) for syl in range(sylnum)])
-        # add word to set
-        words.add(word)
-    return words
+    def genBySyl(self,currWords,ratios,indices,syl):
+        for s in range(self.sylRatios[ratios]):
+            while indices[syl] >= self.sylNum:
+                indices[syl] -= self.sylNum
+                if indices[syl] < 0:
+                    indices[syl] += self.primes[syl]
+            currWords[s] += self.syllables[indices[syl]]
+            indices[syl] += self.primes[syl]
+            print(f"Elapsed time = {round((time.time()-self.start),2)} ... Generating word {currWords[s]}",end="\r")
 
-# Makes words given a number of syllables and a number of words to make
-def makeWords(dir, numSyls, numwords):
-    wordfile = open(dir+"/outputs/words0.txt",'w')
-    words = []
-    try:
-        syls = [line.strip() for line in open(dir+"/outputs/syllables.txt")]
-    except IOError:
-        print("No syllables file")
-        wordfile.write('')
-        wordfile.close()
-        return
-    if len(syls) == 0:
-        print("No syllables in syllables file")
-        wordfile.write('')
-        wordfile.close()
-        return
-    # Defines syllable level weights
-    if numSyls == 1:
-        sylstats = [1]
-    elif numSyls == 2:
-        sylstats = [0.22, 0.78]
-    elif numSyls == 3:
-        sylstats = [0.15, 0.51, 0.34]
-    else:
-        sylstats = [1/numSyls for i in range(numSyls)]
-    # Sets up exact wordcount for each syllable level based on syllable level weights and total word count
-    # This will not necessarily yield total word count exactly
-    wordnums = sylstats
-    for i in range(len(sylstats)):
-        wordnums[i] = int(numwords//(1/sylstats[i]))
-    if sum(wordnums) != numwords:
-        wordnums[-1] = numwords-sum(wordnums[:-1])
-    # Generate words for each syllable level
-    for sylnum in range(numSyls):
-        words += genWords(syls, sylnum+1, wordnums[sylnum])
-    wordfile.write('\n'.join(words))
-    wordfile.close()
+    def genWords(self):
+        indices = self.primes
+        for ratios in range(self.sylCount):
+            random.shuffle(self.syllables)
+            currWords = ['']*self.sylRatios[ratios]
+            for syl in range(ratios+1):
+                self.genBySyl(currWords,ratios,indices,syl)
+            self.words += currWords
+
+    def writeWords(self):
+        self.start = time.time()
+        self.genWords()
+        with open(self.direct+"/outputs/words0.txt",'w') as outfile:
+            outfile.write('\n'.join(self.words))

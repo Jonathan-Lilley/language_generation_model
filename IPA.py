@@ -36,6 +36,8 @@ class IPA:
         for phoneme in phonemes:
             if phoneme in phonemeset:
                 filtered.append(phoneme)
+        if not filtered:
+            filtered = ['']
         return filtered
 
     def validPhonemeSet(self,features):

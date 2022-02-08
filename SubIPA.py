@@ -11,7 +11,7 @@ class SubIPA:
         # Quick note: this catches all the aspects in a row/col/aisle sublist format
         #   Basically, features[0] is the "rows", aka manner of artic, feat[1] is "cols", aka place, etc
         #   We check if the key[aspect][0] is 1 because that means it *only* refers to that singular row/col/aisle
-        #   That will catch thigns like FRIC, but not SONO, which spans multiple rows
+        #   That will catch things like FRIC, but not SONO, which spans multiple rows
         #   This is really just for alpha values
         self.features = {K:['+'+aspect for aspect in self.key if len(self.key[aspect][0]) == 1
                           and self.key[aspect][1] == num] for num in range(3)

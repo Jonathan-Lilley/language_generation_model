@@ -1,5 +1,5 @@
 '''     SYLLABLE CONSTRUCTOR       '''
-import sys
+import sys, os
 from IPA import IPA, Valid
 
 class SylConst:
@@ -20,7 +20,23 @@ class SylConst:
             print("Syllable rule file not found")
 
         self.rules = list()
-        self.syls = set()
+        self.syls = []
+
+
+    def checkValid(self,rulepart):
+        subparts = rulepart.split()
+        for subp in subparts:
+            validity = self.IPAf.validPhonemeSet(subp)
+            if validity == Valid.INVFEAT:
+                print(f"Warning: Invalid feature, {subp} in {rulepart}. This rule  will be ignored")
+                return validity
+            elif validity == Valid.INVSET:
+                print(f"Warning: Phoneme set {subp} in the rule contains features from both consonants and vowels."
+                      " This rule will be ignored.")
+                return validity
+        return Valid.VAL
+
+
 
     def generateRules(self,rule):
         onsets = rule[0].split(';')
@@ -30,21 +46,10 @@ class SylConst:
 
         for part in range(len(allparts)):
             for r in range(len(allparts[part])):
-                partrule = allparts[part][r]
-                validity = self.IPAf.validPhonemeSet(partrule)
-                if validity == Valid.INVFEAT:
-                    print("Warning: Invalid feature.",partrule,"will be ignored")
-                    allparts[part].remove([r])
-                elif validity == Valid.INVSET:
-                    print("Warning: Phoneme set", r, "in the rule contains features from both consonants and vowels."
-                          " This rule will be ignored.")
-                    allparts[part].remove([r])
-                elif validity == Valid.VAL and IPA.checkConflict(partrule):
-                    print("Warning: Phoneme set", allparts[part][r], "contains contradicting features. This rule will "
-                          "be ignored.")
-                    allparts[part].remove([r])
+                if self.checkValid(allparts[part][r]) != Valid.VAL:
+                    allparts[part].remove(allparts[part][r])
 
-        rules = [[[[ons,nuc,cod] for ons in onsets] for nuc in nucleus] for cod in codas]
+        rules = [[[' '.join([ons,nuc,cod]) for ons in allparts[0]] for nuc in allparts[1]] for cod in allparts[2]]
         self.rules = [Lthree for Lone in rules for Ltwo in Lone for Lthree in Ltwo]
 
 
@@ -53,18 +58,22 @@ class SylConst:
         rule = rule.split(' ')
         for sylele in rule:
             phonset = self.IPAf.filterPhonemes(self.phonemes, self.IPAf.findSet(sylele))
-            if len(phonset) == 0:
-                print("Error: No phonemes in set", sylele + ".")
+            if phonset == [''] and sylele != '':
+                print(f"Warning: No phonemes in set {sylele}.")
                 continue
             phonsets.append(phonset)
 
-        syls = [[[[ons,nuc,cod] for ons in phonsets[0]] for nuc in phonsets[1]] for cod in phonsets[2]]
-        self.syls = self.syls.union(set([Lthree for Lone in syls for Ltwo in Lone for Lthree in Ltwo]))
+        syls = phonsets[0]
+        for phonset in phonsets[1:]:
+            newsyls = []
+            for syl in syls:
+                newsyls += [syl+p for p in phonset]
+            syls = newsyls
 
-        # Constructs all syllables given input phonemes and rule file and writes to output file
-    def constructSyls(self):
-        outfile = self.direct + "/outputs/syllables.txt"
+        self.syls += syls
 
+
+    def writeSyls(self):
         abort = False
         if self.phonemes == ['']:
             print("No phoneme set.")
@@ -80,12 +89,15 @@ class SylConst:
 
         for rule in self.rules:
             self.sylsFromRule(rule)
+        self.syls = list(set(self.syls)) # just in case there are duplicates
 
-        sylset = list(self.syls)
-        out = open(outfile, 'w')
-        out.write('\n'.join(sylset))
-        out.close()
+        if not os.path.exists(self.direct+"/outputs"):
+            os.mkdir(self.direct+'/outputs')
+
+        with open(self.direct + "/outputs/syllables.txt",'w') as out:
+            out.write('\n'.join(self.syls))
+            out.close()
 
 if __name__ == "__main__":
-    constructor = SylConst("L3")
-    constructor.constructSyls()
+    constructor = SylConst("L5")
+    constructor.writeSyls()
