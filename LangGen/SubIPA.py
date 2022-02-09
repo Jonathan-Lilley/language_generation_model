@@ -13,7 +13,7 @@ class SubIPA:
         #   We check if the key[aspect][0] is 1 because that means it *only* refers to that singular row/col/aisle
         #   That will catch things like FRIC, but not SONO, which spans multiple rows
         #   This is really just for alpha values
-        self.features = {K:['+'+aspect for aspect in self.key if len(self.key[aspect][0]) == 1
+        self.features = {K+":a":['+'+aspect for aspect in self.key if len(self.key[aspect][0]) == 1
                           and self.key[aspect][1] == num] for num in range(3)
                          for K in (["HEIGHT","BACKNESS","ROUNDING"],["PLACE","MANNER","VOICING"])[consvowel == "C"]}
 

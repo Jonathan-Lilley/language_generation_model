@@ -2,9 +2,10 @@
 # This file creates an entire language with all stages given an input direcectory
 
 import sys, os
-from sylconstr import SylConst
-from wordconstr import WordGen
-from IPA import IPA
+from LangGen.IPA import IPA
+from LangGen.sylconstr import SylConst
+from LangGen.wordconstr import WordGen
+from LangGen.soundchange import SoundChanger
 
 def checkSWCDirect(args):
     if len(args) > 1:
@@ -19,7 +20,7 @@ def checkSWCDirect(args):
             print("Error:", direct, "does not have an inputs directory.")
             sys.exit()
     else:
-        print("Error:", direct, "does not exist.")
+        print("Error: directory", direct, "does not exist.")
         sys.exit()
     return swc, direct
 
@@ -65,4 +66,6 @@ if __name__ == "__main__":
         wordGenerator.writeWords()
         words = wordGenerator.getWords()
 
-
+    if "c" in swc:
+        soundChanger = SoundChanger(direct,IPAf,words)
+        soundChanger.genChanges()

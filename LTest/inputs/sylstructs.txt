@@ -1,0 +1,1 @@
+;+CONS;+CONS,-APPR +APPR;p f;t s;s n|+VOWL|;+CONS;+APPR +CONS,-APPR;f p;s t;n s

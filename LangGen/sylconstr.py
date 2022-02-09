@@ -1,24 +1,21 @@
 '''     SYLLABLE CONSTRUCTOR       '''
 import sys, os
-from IPA import Valid
+from LangGen.IPA import Valid, IPA
 
 class SylConst:
     def __init__(self,direct,IPAf):
         self.direct = direct
         self.IPAf = IPAf
-
         try:
             self.phonemes = (' '.join([line.strip() for line in open(direct + "/inputs/phonemes.txt")
                                        if line.strip() != ''])).split(' ')
         except IOError:
             print("Phonemes file not found")
-
         try:
             self.sylrules = [line.strip().split('|') for line in open(direct + "/inputs/sylstructs.txt")
                              if line.strip() != '']
         except IOError:
             print("Syllable rule file not found")
-
         self.rules = list()
         self.syls = []
 
@@ -38,8 +35,6 @@ class SylConst:
                 return validity
         return Valid.VAL
 
-
-
     def generateRules(self,rule):
         onsets = rule[0].split(';')
         nucleus = rule[1].split(';')
@@ -48,7 +43,6 @@ class SylConst:
 
         for part in range(len(allparts)):
             for r in range(len(allparts[part])):
-                #print(allparts[part],len(allparts[part]),r)
                 if self.checkValid(allparts[part][r]) != Valid.VAL:
                     allparts[part].remove(allparts[part][r])
                     r -= 1
@@ -61,7 +55,7 @@ class SylConst:
         phonsets = []
         rule = rule.split(' ')
         for sylele in rule:
-            phonset = self.IPAf.filterPhonemes(self.phonemes, self.IPAf.findSet(sylele))
+            phonset = IPA.filterPhonemes(self.phonemes, self.IPAf.findSet(sylele))
             if phonset == [''] and sylele != '':
                 print(f"Warning: No phonemes in set {sylele}.")
                 continue

@@ -1,5 +1,6 @@
 '''                 IPA READER AND CLASSES              '''
-from SubIPA import SubIPA
+import re
+from LangGen.SubIPA import SubIPA
 from enum import Enum
 
 class Valid(Enum):
@@ -20,7 +21,7 @@ class IPA:
         allkeys = {**self.IPAC.getKey(), **self.IPAV.getKey()}
         return alphas, allphons, allkeys
 
-    def getAlpha(self):
+    def getAlphas(self):
         return self.alphas
 
     def getPhons(self):
@@ -44,15 +45,6 @@ class IPA:
             self.IPAV.findSet(phonemes,feats)
         return phonemes
 
-    def filterPhonemes(self,phonemes, phonemeset):
-        filtered = []
-        for phoneme in phonemes:
-            if phoneme in phonemeset:
-                filtered.append(phoneme)
-        if not filtered:
-            filtered = ['']
-        return filtered
-
     def validPhonemeSet(self,features):
         valid = Valid.VAL
         feats = features.split(',')
@@ -64,17 +56,28 @@ class IPA:
         if feats[0][1:] not in combkeys and feats[0][1:] not in self.alphas:
             print("Warning: Descriptor " + feats[0][1:] + " not in IPACKEY or IPAVKEY.")
             return Valid.INVFEAT
-        featset = (self.IPAC.getKey(),self.IPAV.getKey())[(feats[0][1:] in self.IPAV.key or feats[0] in self.IPAV.getAFeatures())]
+        featset = ({**self.IPAC.getKey(),**self.IPAC.getAFeatures()},{**self.IPAV.getKey(),**self.IPAV.getAFeatures()})\
+                        [(feats[0][1:] in self.IPAV.key or feats[0] in self.IPAV.getAFeatures())]
 
         for feat in feats:
             if feat[1:] not in combkeys and feat not in self.alphas:
                 print("Warning: Descriptor ",feat," not in IPACKEY or IPAVKEY.")
                 return Valid.INVFEAT
-            elif feat[1:] not in featset:
+            elif feat[1:] not in featset and feat not in featset:
                 print("Warning: Descriptor",feat,"is not in the same feature set.")
                 return Valid.INVSET
 
         return valid
+
+    @staticmethod
+    def filterPhonemes(phonemes, phonemeset):
+        filtered = []
+        for phoneme in phonemes:
+            if phoneme in phonemeset:
+                filtered.append(phoneme)
+        if not filtered:
+            filtered = ['']
+        return filtered
 
     @staticmethod
     def checkConflict(features):
