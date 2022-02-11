@@ -25,7 +25,7 @@ constructions and sound sound change rules.
 ### README TOC:
 - [Quick guide](##quickguide)
 - [The IPA directory](##theipadirectory)
-- [Contents of language directories](##Contents of a language's directory)
+- [Contents of language directories](##Contents of Language Directories)
 
 ------------------------------------------------------------------------------------------------------------------------
 
@@ -202,7 +202,7 @@ easier or make more sense to simply add a new row or column for them. Again, if 
 files.
 
 ------------------------------------------------------------------------------------------------------------------------
-## Contents of a language's directory
+## Contents of Language Directories
 
 ### Files in the directories:
 
